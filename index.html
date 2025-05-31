@@ -273,7 +273,7 @@
                 fields.push(`<b>Total XP:</b> <span style='font-size:1.1em;color:#ffb347;'>${xpVal != null && !isNaN(xpVal) ? Math.floor(xpVal).toLocaleString() : 'N/A'}</span>`);
             // % left to 1m xp
             if (opts.showXPPercent) 
-                fields.push(`<b>${jobName ? jobName : 'XP'}:</b> <span style=\"font-size:1.1em;color:#8cf0ff;\">${xpPercent.toFixed(2)}%</span>`);
+                fields.push(`<b>% to 1m XP:</b> <span style=\"font-size:1.1em;color:#8cf0ff;\">${xpPercent.toFixed(2)}%</span>`);
             // Wallet 
             if (opts.showWallet) 
                 fields.push(`<b>Wallet:</b> <span style="font-size:1.3em;color:#7cff7c;">${wallet != null && !isNaN(wallet) ? formatWallet(wallet) : 'N/A'}</span>`);
