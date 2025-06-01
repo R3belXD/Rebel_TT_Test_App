@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>TT_Test_Tracker</title>
+<title>👑_𝕭𝖎𝖙𝖍_👑</title>
 <style>
     body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: transparent; color: #f0f0f0; }
     header { background: rgba(35,39,43,0.85); padding: 1rem; text-align: center; font-size: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
@@ -163,11 +163,11 @@
         }
         function updateOverlayOptionsPanel() {
             const opts = getOverlayOptions();
+            document.getElementById('showJob').checked = !!opts.showJob;
             document.getElementById('showWallet').checked = !!opts.showWallet;
             document.getElementById('showXPPercent').checked = !!opts.showXPPercent;
             document.getElementById('showRawXP').checked = !!opts.showRawXP;
             document.getElementById('showBonusXP').checked = !!opts.showBonusXP;
-            document.getElementById('showJob').checked = !!opts.showJob;
             document.getElementById('showLevel').checked = !!opts.showLevel;
             document.getElementById('showExpEarned').checked = !!opts.showExpEarned;
         }
@@ -257,24 +257,23 @@
 
             // Build overlay fields (ORDER: Job, Level, Bonus XP, Total XP, %xp, Wallet)
             let fields = [];
-            // Job
             if (opts.showJob && jobName) 
                 fields.push(`<b>Job:</b> <span style='font-size:1.1em;color:#ffa07a;'>${jobName}</span>`);
-            // Level
+            
             if (opts.showLevel) {
                 let level = (xpVal != null && !isNaN(xpVal)) ? Math.floor((Math.sqrt(1 + 8 * xpVal / 5) - 1) / 2) : null;
                 fields.push(`<b>Level:</b> <span style='font-size:1.1em;color:#b0e0e6;'>${level != null && level >= 0 ? level : 'N/A'}</span>`);
             }
-            // Bonus XP
+            
             if (opts.showBonusXP) 
-                fields.push(`<b>Bonus XP:</b> <span style='font-size:1.1em;color:#ffd700;'>${bonusXP != null && !isNaN(bonusXP) ? Number(bonusXP).toLocaleString() : 'N/A'}</span>`);
-             // Total XP
+                fields.push(`<b>Bonus XP Left:</b> <span style='font-size:1.1em;color:#ffd700;'>${bonusXP != null && !isNaN(bonusXP) ? Number(bonusXP).toLocaleString() : 'N/A'}</span>`);
+            
             if (opts.showRawXP) 
                 fields.push(`<b>Total XP:</b> <span style='font-size:1.1em;color:#ffb347;'>${xpVal != null && !isNaN(xpVal) ? Math.floor(xpVal).toLocaleString() : 'N/A'}</span>`);
-            // % left to 1m xp
+            
             if (opts.showXPPercent) 
                 fields.push(`<b>% to 1m XP:</b> <span style=\"font-size:1.1em;color:#8cf0ff;\">${xpPercent.toFixed(2)}%</span>`);
-            // Wallet 
+            
             if (opts.showWallet) 
                 fields.push(`<b>Wallet:</b> <span style="font-size:1.3em;color:#7cff7c;">${wallet != null && !isNaN(wallet) ? formatWallet(wallet) : 'N/A'}</span>`);
 
@@ -535,8 +534,8 @@
 
             // Position relative to overlay
             const overlayRect = overlay.getBoundingClientRect();
-            const popupX = overlayRect.right - 10; // right edge minus inset
-            const popupY = overlayRect.top - 10; // above the overlay
+            const popupX = overlayRect.right - 115; // right edge minus inset default 10
+            const popupY = overlayRect.top - 15; // above the overlay default 10
 
             popup.style.left = `${popupX}px`;
             popup.style.top = `${popupY}px`;
@@ -562,4 +561,4 @@
     })();
 </script>
 </body>
-</html> 
+</html>
