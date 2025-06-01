@@ -3,50 +3,50 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Wa Da Fuk</title>
+<title>👑_𝕭𝖎𝖙𝖍_👑</title>
 <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: transparent; color: #f0f0f0; }
-    header { background: rgba(35,39,43,0.85); padding: 1rem; text-align: center; font-size: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
-    #dataDisplay { background: rgba(35,39,43,0.7); margin: 1rem; padding: 1rem; border-radius: 12px; min-height: 120px; box-shadow: 0 2px 8px rgba(0,0,0,0.10); display:none; }
-    #controls { margin: 1rem; display: flex; flex-wrap: wrap; gap: 1rem; background: transparent; }
-    .control-group { background: rgba(35,39,43,0.7); padding: 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.10); }
-    label { display: block; margin-bottom: 0.5rem; background: transparent; font-weight: 600; letter-spacing: 0.5px; }
-    input, button { margin-bottom: 0.5rem; background: rgba(24,28,32,0.5); color: #f0f0f0; border: 1px solid #444; border-radius: 6px; padding: 0.4rem 0.7rem; font-size: 1rem; transition: border 0.2s, box-shadow 0.2s; }
-    input:focus, button:focus { outline: none; border: 1.5px solid #2d8cf0; box-shadow: 0 0 0 2px rgba(45,140,240,0.15); }
-    button { background: rgba(45,140,240,0.5); color: #fff; border: 1px solid #2d8cf0; padding: 0.5rem 1.2rem; border-radius: 6px; cursor: pointer; font-weight: 600; letter-spacing: 0.5px; box-shadow: 0 1px 4px rgba(45,140,240,0.10); }
-    button:hover { background: rgba(26,115,232,0.7); }
-    #debugPanel {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        max-height: 20vh;
-        overflow-y: auto;
-        background-color: rgba(0, 0, 0, 0.8);
-        color: white;
-        font-size: 0.9em;
-        padding: 0.5em;
-        z-index: 10000;
-    }
-    /* Styles for the XP Earned popup */
-    #xpEarnedPopup {
-        position: fixed;
-        background: rgba(26, 148, 2, 0.9);
-        color: #f1efef;
-        padding: 8px 12px;
-        border-radius: 8px;
-        font-weight: bold;
-        font-size: 1rem;
-        opacity: 0;
-        pointer-events: none;
-        z-index: 99999;
-        transition: opacity 0.5s, transform 0.5s;
-    }
+  body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: transparent; color: #f0f0f0; }
+  header { background: rgba(35,39,43,0.85); padding: 1rem; text-align: center; font-size: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+  #dataDisplay { background: rgba(35,39,43,0.7); margin: 1rem; padding: 1rem; border-radius: 12px; min-height: 120px; box-shadow: 0 2px 8px rgba(0,0,0,0.10); display:none; }
+  #controls { margin: 1rem; display: flex; flex-wrap: wrap; gap: 1rem; background: transparent; }
+  .control-group { background: rgba(35,39,43,0.7); padding: 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.10); }
+  label { display: block; margin-bottom: 0.5rem; background: transparent; font-weight: 600; letter-spacing: 0.5px; }
+  input, button { margin-bottom: 0.5rem; background: rgba(24,28,32,0.5); color: #f0f0f0; border: 1px solid #444; border-radius: 6px; padding: 0.4rem 0.7rem; font-size: 1rem; transition: border 0.2s, box-shadow 0.2s; }
+  input:focus, button:focus { outline: none; border: 1.5px solid #2d8cf0; box-shadow: 0 0 0 2px rgba(45,140,240,0.15); }
+  button { background: rgba(45,140,240,0.5); color: #fff; border: 1px solid #2d8cf0; padding: 0.5rem 1.2rem; border-radius: 6px; cursor: pointer; font-weight: 600; letter-spacing: 0.5px; box-shadow: 0 1px 4px rgba(45,140,240,0.10); }
+  button:hover { background: rgba(26,115,232,0.7); }
+  #debugPanel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-height: 20vh;
+    overflow-y: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    font-size: 0.9em;
+    padding: 0.5em;
+    z-index: 10000;
+  }
+  /* XP Popup styling */
+  #xpEarnedPopup {
+    position: fixed;
+    background: rgba(26, 148, 2, 0.9);
+    color: #f1efef;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1rem;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 99999;
+    transition: opacity 0.5s, transform 0.5s;
+  }
 </style>
 </head>
 <body>
 
-<!-- Main overlay box with gradient border -->
+<!-- Main overlay -->
 <div id="walletOverlay" style="
   display:none;
   position:fixed;
@@ -67,7 +67,7 @@
   border-image: linear-gradient(to right, cyan, purple) 1;">
 </div>
 
-<!-- Transparency and options controls -->
+<!-- Controls for transparency and options -->
 <div id="walletTransparencyControl" style="
   display:none;
   position:fixed;
@@ -95,7 +95,7 @@
     </div>
 </div>
 
-<!-- Popup for EXP Earned floating notification -->
+<!-- XP popup -->
 <div id="xpEarnedPopup"></div>
 
 <script>
@@ -119,6 +119,9 @@ const jobExpTokenMap = [
 ];
 
 (function() {
+  // Declare overlay once
+  const overlay = document.getElementById('walletOverlay');
+
   // Utility functions
   function formatWallet(val) {
     if (val == null || isNaN(val)) return 'N/A';
@@ -138,8 +141,9 @@ const jobExpTokenMap = [
   let lastXpData = null;
   let lastXpValue = null;
   let totalXpGained = 0;
-  let currentBonusXP = 0; // <-- Your fix: store latest bonus XP
+  let currentBonusXP = 0; // Store latest bonus
 
+  // Load options defaults
   const overlayOptionsDefaults = {
     showWallet: true,
     showXPPercent: true,
@@ -155,19 +159,22 @@ const jobExpTokenMap = [
       return { ...overlayOptionsDefaults, ...JSON.parse(localStorage.getItem('walletOverlay_options')) };
     } catch(e) { return {...overlayOptionsDefaults}; }
   }
+
   function saveOverlayOptions(opts) {
-    try { localStorage.setItem('walletOverlay_options', JSON.stringify(opts)); } catch(e) { }
+    try { localStorage.setItem('walletOverlay_options', JSON.stringify(opts)); } catch(e) {}
   }
+
   function updateOverlayOptionsPanel() {
     const opts = getOverlayOptions();
-    document.getElementById('showJob').checked = !!opts.showJob;
     document.getElementById('showWallet').checked = !!opts.showWallet;
     document.getElementById('showXPPercent').checked = !!opts.showXPPercent;
     document.getElementById('showRawXP').checked = !!opts.showRawXP;
     document.getElementById('showBonusXP').checked = !!opts.showBonusXP;
+    document.getElementById('showJob').checked = !!opts.showJob;
     document.getElementById('showLevel').checked = !!opts.showLevel;
     document.getElementById('showExpEarned').checked = !!opts.showExpEarned;
   }
+
   function listenOverlayOptionsPanel() {
     ['showWallet','showXPPercent','showRawXP','showBonusXP','showJob','showLevel','showExpEarned'].forEach(id => {
       document.getElementById(id).addEventListener('change', () => {
@@ -178,6 +185,7 @@ const jobExpTokenMap = [
       });
     });
   }
+
   function updateWalletOverlayFromDataset() {
     const overlay = document.getElementById('walletOverlay');
     let wallet = overlay.dataset.wallet ? Number(overlay.dataset.wallet) : null;
@@ -186,10 +194,10 @@ const jobExpTokenMap = [
     let jobName = overlay.dataset.jobName || '';
     updateWalletOverlay(wallet, truckingXP, bonusXP, jobName);
   }
-  // Main update function
+
+  // Main overlay update function
   function updateWalletOverlay(wallet, truckingXP, bonusXP, jobName) {
-    const overlay = document.getElementById('walletOverlay');
-    // Save latest data
+    // Save to local storage
     try {
       if (wallet != null && !isNaN(wallet)) localStorage.setItem('walletOverlay_wallet', wallet);
       if (truckingXP != null && !isNaN(truckingXP)) localStorage.setItem('walletOverlay_truckingXp', truckingXP);
@@ -197,7 +205,7 @@ const jobExpTokenMap = [
       if (jobName) localStorage.setItem('walletOverlay_jobName', jobName);
     } catch(e){}
 
-    // Map for job XP fields
+    // Map for XP fields
     const jobExpFieldMap = {
       "Trucker": "exp_trucking_trucking",
       "Mechanic": "exp_trucking_mechanic",
@@ -218,7 +226,6 @@ const jobExpTokenMap = [
       "Wildlife Hunter": "exp_hunting_skill"
     };
 
-    // Determine xpVal
     let xpVal = null;
     if (jobName && typeof jobExpFieldMap[jobName] === "string" && lastXpData) {
       const xpField = jobExpFieldMap[jobName];
@@ -229,7 +236,6 @@ const jobExpTokenMap = [
     if (xpVal == null && typeof truckingXP !== "undefined" && truckingXP !== null) {
       xpVal = Number(truckingXP);
     }
-    // Calculate percentage to 1M XP
     const xpPercent = (xpVal != null && !isNaN(xpVal))
       ? Math.max(0, Math.min(100, (xpVal / 1_000_000) * 100))
       : 0;
@@ -237,21 +243,10 @@ const jobExpTokenMap = [
     // Update latest bonus XP
     currentBonusXP = bonusXP;
 
-    // Show XP gained popup if needed
-    const opts = getOverlayOptions();
-    if (opts.showExpEarned) {
-      if (xpVal != null && typeof lastXpValue === 'number') {
-        const gained = xpVal - lastXpValue;
-        if (gained > 0) {
-          totalXpGained += gained;
-          showXpPopup(gained);
-        }
-      }
-      lastXpValue = xpVal;
-    }
-
     // Build overlay display
+    const opts = getOverlayOptions();
     let fields = [];
+
     if (opts.showJob && jobName)
       fields.push(`<b>Job:</b> <span style='font-size:1.1em;color:#ffa07a;'>${jobName}</span>`);
 
@@ -274,19 +269,21 @@ const jobExpTokenMap = [
     if (opts.showWallet)
       fields.push(`<b>Wallet:</b> <span style='font-size:1.3em;color:#7cff7c;'>${formatWallet(wallet)}</span>`);
 
-    // Update overlay
-    document.getElementById('walletOverlay').innerHTML = fields.join('<br>');
-    document.getElementById('walletOverlay').style.display = '';
+    // Set inner HTML
+    overlay.innerHTML = fields.join('<br>');
+    overlay.style.display = 'block';
 
-    // Save data to dataset for next time
-    const overlay = document.getElementById('walletOverlay');
+    // Save to dataset
     overlay.dataset.wallet = wallet != null ? wallet : '';
     overlay.dataset.truckingXp = truckingXP != null ? truckingXP : '';
     overlay.dataset.bonusXp = bonusXP != null ? bonusXP : '';
     overlay.dataset.jobName = jobName || '';
+
+    // Set alpha
+    setOverlayAlpha(slider.value);
   }
 
-  // Data extraction
+  // Data extraction function
   function extractOverlayData(event) {
     let wallet = null, truckingXP = null, bonusXP = null, jobName = null;
     if (event.data && event.data.type === 'data' && event.data.fromTycoonScript && event.data.data) {
@@ -305,6 +302,7 @@ const jobExpTokenMap = [
       }
       wallet = data.wallet ?? null;
       truckingXP = data.exp_trucking_trucking ?? data.truckingXP ?? null;
+
       if (typeof data.job_name !== "undefined" || typeof data.job_title !== "undefined") {
         jobName = data.job_name ?? data.job_title ?? null;
         if (jobName !== lastJobName) lastJobName = jobName;
@@ -331,9 +329,9 @@ const jobExpTokenMap = [
         if (jobName) {
           const jobEntry = jobExpTokenMap.find(entry => entry.jobName.toLowerCase() === jobName.toLowerCase());
           if (jobEntry) {
-            const itemName = jobEntry.itemId;
+            const itemId = jobEntry.itemId;
             for (const key in inventoryObj) {
-              if (key.toLowerCase() === itemName.toLowerCase()) {
+              if (key.toLowerCase() === itemId.toLowerCase()) {
                 const item = inventoryObj[key];
                 if (item && typeof item.amount === 'number') {
                   lastBonusXP = item.amount;
@@ -344,7 +342,6 @@ const jobExpTokenMap = [
             }
           }
         }
-        // fallback if no specific bonus found
         if (!found && !jobName) {
           for (const key in inventoryObj) {
             if (/^exp_token_a\|/i.test(key)) {
@@ -361,13 +358,61 @@ const jobExpTokenMap = [
     return { wallet, truckingXP, bonusXP, jobName };
   }
 
-  // Initialize overlay position and make draggable
+  // Draggable function
+  function makeDraggable(element) {
+    let isDragging = false, offsetX = 0, offsetY = 0;
+    element.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      offsetX = e.clientX - element.offsetLeft;
+      offsetY = e.clientY - element.offsetTop;
+      element.style.cursor = 'grabbing';
+    });
+    document.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        element.style.left = (e.clientX - offsetX) + 'px';
+        element.style.top = (e.clientY - offsetY) + 'px';
+        // move overlay options panel accordingly
+        transparencyControl.style.left = element.style.left;
+        transparencyControl.style.top = (parseInt(element.style.top) + element.offsetHeight + 4) + 'px';
+      }
+    });
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        saveOverlayPosition('walletOverlay', element.offsetLeft, element.offsetTop);
+        isDragging = false;
+        element.style.cursor = 'move';
+      }
+    });
+  }
+
+  function saveOverlayPosition(id, left, top) {
+    try { localStorage.setItem('overlayPos_' + id, JSON.stringify({ left, top })); } catch(e) {}
+  }
+
+  function restoreOverlayPosition(id, el, defaultLeft, defaultTop) {
+    try {
+      const pos = JSON.parse(localStorage.getItem('overlayPos_' + id));
+      if (pos && typeof pos.left === 'number' && typeof pos.top === 'number') {
+        el.style.left = pos.left + 'px';
+        el.style.top = pos.top + 'px';
+      } else {
+        el.style.left = defaultLeft;
+        el.style.top = defaultTop;
+      }
+    } catch(e) {
+      el.style.left = defaultLeft;
+      el.style.top = defaultTop;
+    }
+  }
+
+  // On DOM load
   window.addEventListener('DOMContentLoaded', () => {
-    const overlay = document.getElementById('walletOverlay');
-    // restore position
-    restoreOverlayPosition('walletOverlay', overlay, '10vw', '10vh');
+    // Make overlay draggable
     makeDraggable(overlay);
-    // load previous data
+    // Restore position
+    restoreOverlayPosition('walletOverlay', overlay, '10vw', '10vh');
+
+    // Load previous data
     let wallet = localStorage.getItem('walletOverlay_wallet');
     let truckingXP = localStorage.getItem('walletOverlay_truckingXp');
     let bonusXP = localStorage.getItem('walletOverlay_bonusXp');
@@ -376,49 +421,310 @@ const jobExpTokenMap = [
     truckingXP = truckingXP !== null ? Number(truckingXP) : null;
     bonusXP = bonusXP !== null ? Number(bonusXP) : null;
 
+    // Set dataset for future updates
     overlay.dataset.wallet = wallet != null ? wallet : '';
     overlay.dataset.truckingXp = truckingXP != null ? truckingXP : '';
     overlay.dataset.bonusXp = bonusXP != null ? bonusXP : '';
 
+    // Show overlay if data exists
     if (wallet != null || truckingXP != null || bonusXP != null) {
       updateWalletOverlay(wallet, truckingXP, bonusXP);
       overlay.style.display = '';
     }
-    restoreOverlayAlpha();
-    if (overlay.style.display !== 'none') showTransparencyControl();
+
+    // Initialize options panel
     updateOverlayOptionsPanel();
     listenOverlayOptionsPanel();
 
-    // Start the auto refresh interval
-    const refreshIntervalMs = 5000; // 5 seconds
+    // Show overlay immediately for testing
+    overlay.style.display = '';
+
+    // Start auto-refresh (simulate data update every 5 sec for demo)
     setInterval(() => {
-      if (lastXpData && lastXpData !== null && lastXpValue !== null && lastJobName !== null) {
-        // Get latest dataset values
+      if (lastXpData && lastXpValue !== null && lastJobName !== null) {
         const overlayEl = document.getElementById('walletOverlay');
-        let walletVal = overlayEl.dataset.wallet ? Number(overlayEl.dataset.wallet) : null;
-        let truckingVal = overlayEl.dataset.truckingXp ? Number(overlayEl.dataset.truckingXp) : null;
-        let bonusVal = overlayEl.dataset.bonusXp ? Number(overlayEl.dataset.bonusXp) : null;
-        // update overlay with latest data
-        updateWalletOverlay(walletVal, truckingVal, bonusVal, lastJobName);
+        let w = overlayEl.dataset.wallet ? Number(overlayEl.dataset.wallet) : null;
+        let t = overlayEl.dataset.truckingXp ? Number(overlayEl.dataset.truckingXp) : null;
+        let b = overlayEl.dataset.bonusXp ? Number(overlayEl.dataset.bonusXp) : null;
+        updateWalletOverlay(w, t, b, lastJobName);
       }
-    }, refreshIntervalMs);
+    }, 5000);
   });
 
-  // Your existing message handler
+  // Global variables
+  let lastXpData = null;
+  let lastXpValue = null;
+  let lastJobName = null;
+  let currentBonusXP = 0; // store latest bonus XP
+
+  // Message event to receive data
   window.addEventListener('message', (event) => {
-    // focus detection code omitted for brevity
-    // extract latest data
+    // Focus detection code omitted for brevity
+    // Extract data
     const { wallet, truckingXP, bonusXP, jobName } = extractOverlayData(event);
-    // update global bonus XP
+    // Save latest bonus XP
     currentBonusXP = bonusXP;
-    // check if data changed
-    // then update overlay
-    // (your code already does this)
-    // ...
+    // Determine if need to update overlay
+    const overlayEl = document.getElementById('walletOverlay');
+    const prevWallet = overlayEl.dataset.wallet ? Number(overlayEl.dataset.wallet) : null;
+    const prevTrucking = overlayEl.dataset.truckingXp ? Number(overlayEl.dataset.truckingXp) : null;
+    const prevBonus = overlayEl.dataset.bonusXp ? Number(overlayEl.dataset.bonusXp) : null;
+    const prevJob = overlayEl.dataset.jobName || '';
+
+    const updateNeeded =
+      wallet !== prevWallet ||
+      truckingXP !== prevTrucking ||
+      bonusXP !== prevBonus ||
+      jobName !== prevJob;
+
+    if (wallet != null || truckingXP != null || bonusXP != null || jobName) {
+      if (updateNeeded) {
+        updateWalletOverlay(wallet, truckingXP, bonusXP, jobName);
+        overlayEl.dataset.wallet = wallet != null ? wallet : '';
+        overlayEl.dataset.truckingXp = truckingXP != null ? truckingXP : '';
+        overlayEl.dataset.bonusXp = bonusXP != null ? bonusXP : '';
+        overlayEl.dataset.jobName = jobName;
+        overlayEl.style.display = '';
+      }
+    }
   });
 
-  // your other functions like showXpPopup, makeDraggable, restoreOverlayPosition, etc.
-  // (make sure they're included, unchanged, or adapted from your code)
+  // Your helper functions:
+  function extractOverlayData(event) {
+    let wallet = null, truckingXP = null, bonusXP = null, jobName = null;
+    if (event.data?.type === 'data' && event.data.fromTycoonScript && event.data.data) {
+      const data = event.data.data;
+      for (const k of [
+        "exp_trucking_mechanic","exp_piloting_cargos","exp_farming_mining",
+        "exp_business_business","exp_trucking_garbage","exp_trucking_trucking",
+        "exp_ems_ems","exp_player_racing","exp_train_bus","exp_ems_fire",
+        "exp_train_train","exp_trucking_postop","exp_piloting_heli",
+        "exp_business_faction","exp_farming_farming","exp_farming_fishing",
+        "exp_hunting_skill","exp_piloting_piloting"
+      ]) {
+        if (typeof data[k] !== "undefined") {
+          lastXpData = data;
+          break;
+        }
+      }
+      wallet = data.wallet ?? null;
+      truckingXP = data.exp_trucking_trucking ?? data.truckingXP ?? null;
+      if (typeof data.job_name !== "undefined" || typeof data.job_title !== "undefined") {
+        jobName = data.job_name ?? data.job_title ?? null;
+        if (jobName !== lastJobName) lastJobName = jobName;
+      } else {
+        jobName = lastJobName;
+      }
+      let inventoryObj = null;
+      if (data.inventory) {
+        if (typeof data.inventory === 'string') {
+          try { inventoryObj = JSON.parse(data.inventory); } catch(e) { inventoryObj = null; }
+        } else if (typeof data.inventory === 'object') {
+          inventoryObj = data.inventory;
+        }
+        if (inventoryObj) lastInventoryObj = inventoryObj;
+      }
+      if (!inventoryObj && lastInventoryObj) {
+        inventoryObj = lastInventoryObj;
+      }
+      if (inventoryObj) {
+        for (const key in inventoryObj) {
+          if (typeof inventoryObj[key].amount === 'number') {
+            if (
+              (jobName && key.toLowerCase() === (jobExpTokenMap.find(e => e.jobName === jobName)?.itemId ?? '').toLowerCase()) ||
+              (/^exp_token_a\|/i.test(key))
+            ) {
+              bonusXP = inventoryObj[key].amount;
+              break;
+            }
+          }
+        }
+      }
+    }
+    return { wallet, truckingXP, bonusXP, jobName };
+  }
+
+  // Make draggable
+  function makeDraggable(el) {
+    let isDragging = false, offsetX=0, offsetY=0;
+    el.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      offsetX = e.clientX - el.offsetLeft;
+      offsetY = e.clientY - el.offsetTop;
+      el.style.cursor = 'grabbing';
+    });
+    document.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        el.style.left = (e.clientX - offsetX) + 'px';
+        el.style.top = (e.clientY - offsetY) + 'px';
+        transparencyControl.style.left = el.style.left;
+        transparencyControl.style.top = (parseInt(el.style.top) + el.offsetHeight + 4) + 'px';
+      }
+    });
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        saveOverlayPosition('walletOverlay', el.offsetLeft, el.offsetTop);
+        isDragging=false;
+        el.style.cursor='move';
+      }
+    });
+  }
+
+  function saveOverlayPosition(id,left,top) {
+    try { localStorage.setItem('overlayPos_' + id, JSON.stringify({left,top})); } catch(e) {}
+  }
+
+  function restoreOverlayPosition(id, el, defLeft, defTop) {
+    try {
+      const pos = JSON.parse(localStorage.getItem('overlayPos_' + id));
+      if (pos && typeof pos.left==='number' && typeof pos.top==='number') {
+        el.style.left = pos.left + 'px';
+        el.style.top = pos.top + 'px';
+      } else {
+        el.style.left=defLeft; el.style.top=defTop;
+      }
+    } catch(e) {
+      el.style.left=defLeft; el.style.top=defTop;
+    }
+  }
+
+  // On DOM load
+  window.addEventListener('DOMContentLoaded', () => {
+    makeDraggable(overlay);
+    restoreOverlayPosition('walletOverlay', overlay, '10vw', '10vh');
+
+    // Load previous data
+    let w = localStorage.getItem('walletOverlay_wallet');
+    let t = localStorage.getItem('walletOverlay_truckingXp');
+    let b = localStorage.getItem('walletOverlay_bonusXp');
+
+    w = w!==null?Number(w):null;
+    t = t!==null?Number(t):null;
+    b = b!==null?Number(b):null;
+
+    overlay.dataset.wallet = w!==null?w:'';
+    overlay.dataset.truckingXp = t!==null?t:'';
+    overlay.dataset.bonusXp = b!==null?b:'';
+
+    if (w!==null || t!==null || b!==null) {
+      updateWalletOverlay(w, t, b);
+      overlay.style.display='';
+    }
+
+    // For demo, show overlay immediately
+    overlay.style.display='';
+
+    // Start auto-refresh simulation
+    setInterval(() => {
+      if (lastXpData && lastXpValue!==null && lastJobName!==null) {
+        const el = document.getElementById('walletOverlay');
+        let w = el.dataset.wallet?Number(el.dataset.wallet):null;
+        let t = el.dataset.truckingXp?Number(el.dataset.truckingXp):null;
+        let b = el.dataset.bonusXp?Number(el.dataset.bonusXp):null;
+        updateWalletOverlay(w, t, b, lastJobName);
+      }
+    }, 5000);
+  });
+
+  // Global vars
+  let lastXpData=null, lastXpValue=null, lastJobName=null, currentBonusXP=0;
+
+  // Message event
+  window.addEventListener('message', (event) => {
+    // Focus code omitted for brevity
+    const { wallet, truckingXP, bonusXP, jobName } = extractOverlayData(event);
+    currentBonusXP = bonusXP; // update latest bonus
+    const el = document.getElementById('walletOverlay');
+    const prevW = el.dataset.wallet?Number(el.dataset.wallet):null;
+    const prevT = el.dataset.truckingXp?Number(el.dataset.truckingXp):null;
+    const prevB = el.dataset.bonusXp?Number(el.dataset.bonusXp):null;
+    const prevJ = el.dataset.jobName||'';
+
+    const needUpdate = 
+      wallet!==prevW || truckingXP!==prevT || bonusXP!==prevB || jobName!==prevJ;
+
+    if (wallet!==null || truckingXP!==null || bonusXP!==null || jobName) {
+      if (needUpdate) {
+        updateWalletOverlay(wallet, truckingXP, bonusXP, jobName);
+        el.dataset.wallet=wallet!==null?wallet:'';
+        el.dataset.truckingXp=truckingXP!==null?truckingXP:'';
+        el.dataset.bonusXp=bonusXP!==null?bonusXP:'';
+        el.dataset.jobName=jobName;
+        el.style.display='';
+      }
+    }
+  });
+
+  // Your helper functions
+  function updateWalletOverlay(wallet, truckingXP, bonusXP, jobName) {
+    // Save to local storage
+    try {
+      if (wallet!==null && !isNaN(wallet)) localStorage.setItem('walletOverlay_wallet',wallet);
+      if (truckingXP!==null && !isNaN(truckingXP)) localStorage.setItem('walletOverlay_truckingXp',truckingXP);
+      if (bonusXP!==null && !isNaN(bonusXP)) localStorage.setItem('walletOverlay_bonusXp',bonusXP);
+    } catch(e){}
+    // Map for XP fields
+    const map = {
+      "Trucker": "exp_trucking_trucking",
+      "Mechanic": "exp_trucking_mechanic",
+      "Garbage Collector": "exp_trucking_garbage",
+      "PostOP Driver": "exp_trucking_postop",
+      "Airline Pilot": "exp_piloting_piloting",
+      "Helicopter Pilot": "exp_piloting_heli",
+      "Cargo Pilot": "exp_piloting_cargos",
+      "Bus Driver": "exp_train_bus",
+      "Train Conductor": "exp_train_train",
+      "EMS / Paramedic": "exp_ems_ems",
+      "Firefighter": "exp_ems_fire",
+      "Businesses": "exp_business_business",
+      "Street Racer": "exp_player_racing",
+      "Farmer": "exp_farming_farming",
+      "Fisherman": "exp_farming_fishing",
+      "Miner": "exp_farming_mining",
+      "Wildlife Hunter": "exp_hunting_skill"
+    };
+    let xpVal = null;
+    if (jobName && typeof map[jobName]==='string' && lastXpData) {
+      const k = map[jobName];
+      if (typeof lastXpData[k]!=='undefined') xpVal=Number(lastXpData[k]);
+    }
+    if (xpVal==null && typeof truckingXP!=='undefined' && truckingXP!==null) xpVal=Number(truckingXP);
+    const xpPercent = (xpVal!=null && !isNaN(xpVal)) ? Math.max(0, Math.min(100, (xpVal/1e6)*100)) : 0;
+
+    // Save latest bonus XP
+    currentBonusXP=bonusXP;
+
+    // Build overlay fields
+    const opts = getOverlayOptions();
+    let fields=[];
+    if (opts.showJob && jobName)
+      fields.push(`<b>Job:</b> <span style='font-size:1.1em;color:#ffa07a;'>${jobName}</span>`);
+    if (opts.showLevel) {
+      let level = (xpVal != null && !isNaN(xpVal))
+        ? Math.floor((Math.sqrt(1+8*xpVal/5)-1)/2)
+        : null;
+      fields.push(`<b>Level:</b> <span style='font-size:1.1em;color:#b0e0e6;'>${level!==null && level>=0 ? level:'N/A'}</span>`);
+    }
+    if (opts.showBonusXP)
+      fields.push(`<b>Bonus XP Left:</b> <span style='font-size:1.1em;color:#ffd700;'>${Number(bonusXP).toLocaleString()}</span>`);
+    if (opts.showRawXP)
+      fields.push(`<b>Total XP:</b> <span style='font-size:1.1em;color:#ffb347;'>${xpVal!=null && !isNaN(xpVal) ? Math.floor(xpVal).toLocaleString() :'N/A'}</span>`);
+    if (opts.showXPPercent)
+      fields.push(`<b>% to 1M XP:</b> <span style='font-size:1.1em;color:#8cf0ff;'>${xpPercent.toFixed(2)}%</span>`);
+    if (opts.showWallet)
+      fields.push(`<b>Wallet:</b> <span style='font-size:1.3em;color:#7cff7c;'>${formatWallet(wallet)}</span>`);
+
+    // Update overlay
+    document.getElementById('walletOverlay').innerHTML=fields.join('<br>');
+    document.getElementById('walletOverlay').style.display='';
+
+    // Save dataset
+    const el = document.getElementById('walletOverlay');
+    el.dataset.wallet=wallet!==null?wallet:'';
+    el.dataset.truckingXp=truckingXP!==null?truckingXP:'';
+    el.dataset.bonusXp=bonusXP!==null?bonusXP:'';
+    el.dataset.jobName=jobName;
+  }
 </script>
 </body>
 </html>
