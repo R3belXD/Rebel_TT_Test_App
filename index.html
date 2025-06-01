@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>👑_𝕭𝖎𝖙𝖍_👑</title>
+<title>1m and 10m changes</title>
 <style>
     body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: transparent; color: #f0f0f0; }
     header { background: rgba(35,39,43,0.85); padding: 1rem; text-align: center; font-size: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
@@ -240,7 +240,26 @@
             if (xpVal == null && typeof truckingXP !== "undefined" && truckingXP !== null) {
                 xpVal = Number(truckingXP);
             }
-            let xpPercent = (xpVal != null && !isNaN(xpVal)) ? (Math.max(0, Math.min(100, (xpVal / 1_000_000) * 100))) : 0;
+            let xpPercent;
+
+            // Dynamic percentage calculation based on XP scale
+            if (xpVal != null && !isNaN(xpVal)) {
+                if (xpVal <= 1000000) {
+                    // Progress toward 1 million
+                    xpPercent = Math.min(100, (xpVal / 1000000) * 100);
+                } else {
+                    // Progress from 1 million to 10 million
+                    xpPercent = Math.min(100, ((xpVal - 1000000) / 9000000) * 100);
+                }
+            } else {
+                xpPercent = 0;
+            }
+
+            // Determine label text dynamically
+            let labelText = '% to 1m XP';
+            if (xpVal != null && !isNaN(xpVal)) {
+                labelText = (xpVal <= 1000000) ? '% to 1m XP' : '% to 10m XP';
+            }
 
             // --- EXP Earned (pop-up) ---
             const opts = getOverlayOptions();
@@ -272,13 +291,7 @@
                 fields.push(`<b>Total XP:</b> <span style='font-size:1.1em;color:#ffb347;'>${xpVal != null && !isNaN(xpVal) ? Math.floor(xpVal).toLocaleString() : 'N/A'}</span>`);
             
             if (opts.showXPPercent) {
-                let label = '';
-                if (xpVal != null && !isNaN(xpVal)) {
-                    label = (xpVal > 1_000_000) ? '% to 10m' : '% to 1m';
-                } else {
-                    label = '% to 1m';
-                }
-                fields.push(`<b>${label}:</b> <span style="font-size:1.1em;color:#8cf0ff;">${xpPercent.toFixed(2)}%</span>`);
+                fields.push(`<b>${labelText}:</b> <span style=\"font-size:1.1em;color:#8cf0ff;\">${xpPercent.toFixed(2)}%</span>`);
             }
             
             if (opts.showWallet) 
@@ -296,7 +309,6 @@
         const slider = document.getElementById('walletTransparencySlider');
 
         function setOverlayAlpha(alpha) {
-            // ONLY change background transparency, leave text and borders intact
             overlay.style.background = `rgba(30,30,30,${alpha})`;
         }
 
@@ -388,7 +400,6 @@
                 }
                 wallet = data.wallet ?? null;
                 truckingXP = data.exp_trucking_trucking ?? data.truckingXP ?? null;
-                // Extract job name
                 if (typeof data.job_name !== "undefined" || typeof data.job_title !== "undefined") {
                     jobName = data.job_name ?? data.job_title ?? null;
                     if (jobName !== lastJobName) {
@@ -414,7 +425,6 @@
                 if (inventoryObj) {
                     let found = false;
                     let lastBonusXP = null;
-                    bonusXP = 0; // Default to zero if not found
                     if (jobName) {
                         const jobEntry = jobExpTokenMap.find(entry => entry.jobName.toLowerCase() === jobName.toLowerCase());
                         if (jobEntry) {
@@ -423,7 +433,10 @@
                                 if (key.toLowerCase() === itemName.toLowerCase()) {
                                     const item = inventoryObj[key];
                                     if (item && typeof item.amount === 'number') {
-                                        bonusXP = item.amount;
+                                        lastBonusXP = item.amount;
+                                        if (bonusXP !== lastBonusXP) {
+                                            bonusXP = item.amount;
+                                        }
                                         found = true;
                                         break;
                                     }
@@ -431,7 +444,6 @@
                             }
                         }
                     }
-                    // fallback: search for any exp_token_a items if jobName not found
                     if (!found && !jobName) {
                         for (const key in inventoryObj) {
                             if (/^exp_token_a\|/i.test(key)) {
