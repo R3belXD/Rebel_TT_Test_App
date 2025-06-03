@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>PerkChances</title>
+<title>👑_𝕭𝖎𝖙𝖍_👑</title>
 <style>
     body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: transparent; color: #f0f0f0; }
     header { background: rgba(35,39,43,0.85); padding: 1rem; text-align: center; font-size: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
@@ -240,26 +240,7 @@
             if (xpVal == null && typeof truckingXP !== "undefined" && truckingXP !== null) {
                 xpVal = Number(truckingXP);
             }
-
-            // Dynamic percentage calculation based on XP scale
-            let xpPercent;
-            if (xpVal != null && !isNaN(xpVal)) {
-                if (xpVal <= 1000000) {
-                    // Progress toward 1 million
-                    xpPercent = Math.min(100, (xpVal / 1000000) * 100);
-                } else {
-                    // Progress from 1 million to 10 million
-                    xpPercent = Math.min(100, ((xpVal - 1000000) / 9000000) * 100);
-                }
-            } else {
-                xpPercent = 0;
-            }
-
-            // Determine label text dynamically
-            let labelText = '% to 1m XP';
-            if (xpVal != null && !isNaN(xpVal)) {
-                labelText = (xpVal <= 1000000) ? '% to 1m XP' : '% to 10m XP';
-            }
+            let xpPercent = (xpVal != null && !isNaN(xpVal)) ? (Math.max(0, Math.min(100, (xpVal / 1_000_000) * 100))) : 0;
 
             // --- EXP Earned (pop-up) ---
             const opts = getOverlayOptions();
@@ -290,26 +271,23 @@
             if (opts.showRawXP) 
                 fields.push(`<b>Total XP:</b> <span style='font-size:1.1em;color:#ffb347;'>${xpVal != null && !isNaN(xpVal) ? Math.floor(xpVal).toLocaleString() : 'N/A'}</span>`);
             
-            if (opts.showXPPercent) {
-                fields.push(`<b>${labelText}:</b> <span style=\"font-size:1.1em;color:#8cf0ff;\">${xpPercent.toFixed(2)}%</span>`);
-            }
-            
+            if (opts.showXPPercent) 
+                fields.push(`<b>% to 1m XP:</b> <span style=\"font-size:1.1em;color:#8cf0ff;\">${xpPercent.toFixed(2)}%</span>`);
+
             if (opts.showWallet) 
                 fields.push(`<b>Wallet:</b> <span style="font-size:1.3em;color:#7cff7c;">${wallet != null && !isNaN(wallet) ? formatWallet(wallet) : 'N/A'}</span>`);
 
-            // Calculate perk chance percentage
+            // --- Perk Chance Calculation ---
             let perkChancePercent = 0;
             if (xpVal != null && !isNaN(xpVal) && lastXpValue != null && !isNaN(lastXpValue)) {
-                const totalExp = xpVal;
-                const previousXp = lastXpValue;
-                const earnedExp = totalExp - previousXp;
-                if (totalExp < 1000000 && earnedExp > 0) {
-                    perkChancePercent = (earnedExp * 100) / (1000000 - totalExp);
+                const earnedExp = xpVal - lastXpValue;
+                if (xpVal < 1000000 && earnedExp > 0) {
+                    perkChancePercent = (earnedExp * 100) / (1000000 - xpVal);
                 } else {
                     perkChancePercent = 0;
                 }
             }
-            // Add to fields
+            // Add perk chance to display
             fields.push(`<b>Perk Chance:</b> <span style='font-size:1.1em;color:#ff69b4;'>${perkChancePercent.toFixed(2)}%</span>`);
 
             // Update overlay content
@@ -551,7 +529,6 @@
                 currentJobName !== prevJobName;
 
             if (wallet != null || truckingXP != null || bonusXP != null || jobName) {
-                if (shouldUpdate) { /* optional debug */ }
                 updateWalletOverlay(currentWallet, currentTruckingXP, currentBonusXP, currentJobName);
                 overlay.dataset.wallet = currentWallet != null ? currentWallet : '';
                 overlay.dataset.truckingXp = currentTruckingXP != null ? currentTruckingXP : '';
@@ -566,20 +543,17 @@
             const popup = document.getElementById('xpEarnedPopup');
             const overlay = document.getElementById('walletOverlay');
 
-            // Position relative to overlay
             const overlayRect = overlay.getBoundingClientRect();
-            const popupX = overlayRect.right - 115; // right edge minus inset default 10
-            const popupY = overlayRect.top - 15; // above the overlay default 10
+            const popupX = overlayRect.right - 115;
+            const popupY = overlayRect.top - 15;
 
             popup.style.left = `${popupX}px`;
             popup.style.top = `${popupY}px`;
-            // Show only the integer part
             popup.textContent = `EXP +${Math.floor(gainedXp)}`;
             popup.style.opacity = '1';
             popup.style.transform = 'translateY(0)';
             popup.style.display = 'block';
 
-            // Animate out
             setTimeout(() => {
                 popup.style.opacity = '0';
                 popup.style.transform = 'translateY(-10px)';
@@ -589,10 +563,504 @@
             }, 1500);
         }
 
-        // --- Rest of your script (if any) --- 
-        // (Ensure all previous code inside your script block remains, including the functions for transparency, drag, and data extraction.)
-        // The above modifications are the key parts.
-    })();
-</script>
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            const overlay = document.getElementById('walletOverlay');
+            restoreOverlayPosition('walletOverlay', overlay, '10vw', '10vh');
+            makeDraggable(overlay);
+            let wallet = localStorage.getItem('walletOverlay_wallet');
+            let truckingXP = localStorage.getItem('walletOverlay_truckingXp');
+            let bonusXP = localStorage.getItem('walletOverlay_bonusXp');
+            wallet = wallet !== null ? Number(wallet) : null;
+            truckingXP = truckingXP !== null ? Number(truckingXP) : null;
+            bonusXP = bonusXP !== null ? Number(bonusXP) : null;
+            overlay.dataset.wallet = wallet != null ? wallet : '';
+            overlay.dataset.truckingXp = truckingXP != null ? truckingXP : '';
+            overlay.dataset.bonusXp = bonusXP != null ? bonusXP : '';
+            if (wallet != null || truckingXP != null || bonusXP != null) {
+                updateWalletOverlay(wallet, truckingXP, bonusXP);
+                overlay.style.display = '';
+            }
+            restoreOverlayAlpha();
+            if (overlay.style.display !== 'none') showTransparencyControl();
+            updateOverlayOptionsPanel();
+        });
+
+        // The core update function
+        function updateWalletOverlay(wallet, truckingXP, bonusXP, jobName) {
+            const overlay = document.getElementById('walletOverlay');
+
+            // Save data
+            try {
+                if (wallet != null && !isNaN(wallet)) localStorage.setItem('walletOverlay_wallet', wallet);
+                if (truckingXP != null && !isNaN(truckingXP)) localStorage.setItem('walletOverlay_truckingXp', truckingXP);
+                if (bonusXP != null && !isNaN(bonusXP)) localStorage.setItem('walletOverlay_bonusXp', bonusXP);
+                if (jobName) localStorage.setItem('walletOverlay_jobName', jobName);
+            } catch (e) {}
+
+            // Map for XP
+            const jobExpFieldMap = {
+                "Trucker": "exp_trucking_trucking",
+                "Mechanic": "exp_trucking_mechanic",
+                "Garbage Collector": "exp_trucking_garbage",
+                "PostOP Driver": "exp_trucking_postop",
+                "Airline Pilot": "exp_piloting_piloting",
+                "Helicopter Pilot": "exp_piloting_heli",
+                "Cargo Pilot": "exp_piloting_cargos",
+                "Bus Driver": "exp_train_bus",
+                "Train Conductor": "exp_train_train",
+                "EMS / Paramedic": "exp_ems_ems",
+                "Firefighter": "exp_ems_fire",
+                "Businesses": "exp_business_business",
+                "Street Racer": "exp_player_racing",
+                "Farmer": "exp_farming_farming",
+                "Fisherman": "exp_farming_fishing",
+                "Miner": "exp_farming_mining",
+                "Wildlife Hunter": "exp_hunting_skill"
+            };
+
+            let xpVal = null;
+            if (jobName && typeof jobExpFieldMap[jobName] === "string" && lastXpData) {
+                const xpField = jobExpFieldMap[jobName];
+                if (typeof lastXpData[xpField] !== "undefined") {
+                    xpVal = Number(lastXpData[xpField]);
+                }
+            }
+            if (xpVal == null && typeof truckingXP !== "undefined" && truckingXP !== null) {
+                xpVal = Number(truckingXP);
+            }
+            let xpPercent = (xpVal != null && !isNaN(xpVal)) ? (Math.max(0, Math.min(100, (xpVal / 1_000_000) * 100))) : 0;
+
+            // --- EXP Earned (pop-up) ---
+            const opts = getOverlayOptions();
+            if (opts.showExpEarned) {
+                if (xpVal != null && typeof lastXpValue === 'number') {
+                    const gained = xpVal - lastXpValue;
+                    if (gained > 0) {
+                        totalXpGained += gained;
+                        showXpPopup(gained);
+                    }
+                }
+                lastXpValue = xpVal;
+            }
+
+            // Build overlay fields
+            let fields = [];
+            if (opts.showJob && jobName) 
+                fields.push(`<b>Job:</b> <span style='font-size:1.1em;color:#ffa07a;'>${jobName}</span>`);
+            
+            if (opts.showLevel) {
+                let level = (xpVal != null && !isNaN(xpVal)) ? Math.floor((Math.sqrt(1 + 8 * xpVal / 5) - 1) / 2) : null;
+                fields.push(`<b>Level:</b> <span style='font-size:1.1em;color:#b0e0e6;'>${level != null && level >= 0 ? level : 'N/A'}</span>`);
+            }
+            if (opts.showBonusXP) 
+                fields.push(`<b>Bonus XP Left:</b> <span style='font-size:1.1em;color:#ffd700;'>${bonusXP != null && !isNaN(bonusXP) ? Number(bonusXP).toLocaleString() : 'N/A'}</span>`);
+            if (opts.showRawXP) 
+                fields.push(`<b>Total XP:</b> <span style='font-size:1.1em;color:#ffb347;'>${xpVal != null && !isNaN(xpVal) ? Math.floor(xpVal).toLocaleString() : 'N/A'}</span>`);
+            if (opts.showXPPercent) 
+                fields.push(`<b>% to 1m XP:</b> <span style=\"font-size:1.1em;color:#8cf0ff;\">${xpPercent.toFixed(2)}%</span>`);
+
+            if (opts.showWallet) 
+                fields.push(`<b>Wallet:</b> <span style="font-size:1.3em;color:#7cff7c;">${wallet != null && !isNaN(wallet) ? formatWallet(wallet) : 'N/A'}</span>`);
+
+            // --- Perk Chance Calculation ---
+            let perkChancePercent = 0;
+            if (xpVal != null && !isNaN(xpVal) && lastXpValue != null && !isNaN(lastXpValue)) {
+                const earnedExp = xpVal - lastXpValue;
+                if (xpVal < 1000000 && earnedExp > 0) {
+                    perkChancePercent = (earnedExp * 100) / (1000000 - xpVal);
+                } else {
+                    perkChancePercent = 0;
+                }
+            }
+            fields.push(`<b>Perk Chance:</b> <span style='font-size:1.1em;color:#ff69b4;'>${perkChancePercent.toFixed(2)}%</span>`);
+
+            // Update overlay
+            const overlay = document.getElementById('walletOverlay');
+            overlay.innerHTML = fields.join('<br>');
+            overlay.style.display = '';
+            setOverlayAlpha(slider.value);
+        }
+
+        // --- Transparency controls ---
+        const overlay = document.getElementById('walletOverlay');
+        const transparencyControl = document.getElementById('walletTransparencyControl');
+        const slider = document.getElementById('walletTransparencySlider');
+
+        function setOverlayAlpha(alpha) {
+            overlay.style.background = `rgba(30,30,30,${alpha})`;
+        }
+
+        function restoreOverlayAlpha() {
+            let alpha = localStorage.getItem('walletOverlay_alpha');
+            if (alpha === null) alpha = '0.92';
+            slider.value = alpha;
+            setOverlayAlpha(alpha);
+        }
+
+        slider && slider.addEventListener('input', () => {
+            setOverlayAlpha(slider.value);
+            try { localStorage.setItem('walletOverlay_alpha', slider.value); } catch (e) {}
+        });
+
+        function showTransparencyControl() {
+            transparencyControl.style.display = '';
+            transparencyControl.style.left = overlay.style.left;
+            transparencyControl.style.top = (parseInt(overlay.style.top, 10) + overlay.offsetHeight + 20) + 'px';
+        }
+        function hideTransparencyControl() {
+            transparencyControl.style.display = 'none';
+        }
+
+        // Draggable overlay
+        function makeDraggable(overlay) {
+            let isDragging = false, offsetX = 0, offsetY = 0;
+            overlay.addEventListener('mousedown', function(e) {
+                isDragging = true;
+                offsetX = e.clientX - overlay.offsetLeft;
+                offsetY = e.clientY - overlay.offsetTop;
+                overlay.style.cursor = 'grabbing';
+            });
+            document.addEventListener('mousemove', function(e) {
+                if (isDragging) {
+                    overlay.style.left = (e.clientX - offsetX) + 'px';
+                    overlay.style.top = (e.clientY - offsetY) + 'px';
+                    transparencyControl.style.left = overlay.style.left;
+                    transparencyControl.style.top = (parseInt(overlay.style.top, 10) + overlay.offsetHeight + 4) + 'px';
+                }
+            });
+            document.addEventListener('mouseup', function() {
+                if (isDragging) {
+                    saveOverlayPosition('walletOverlay', overlay.offsetLeft, overlay.offsetTop);
+                }
+                isDragging = false;
+                overlay.style.cursor = 'move';
+            });
+        }
+
+        function saveOverlayPosition(id, left, top) {
+            try { localStorage.setItem('overlayPos_' + id, JSON.stringify({ left, top })); } catch (e) {}
+        }
+        function restoreOverlayPosition(id, el, defaultLeft, defaultTop) {
+            try {
+                const pos = JSON.parse(localStorage.getItem('overlayPos_' + id));
+                if (pos && typeof pos.left === 'number' && typeof pos.top === 'number') {
+                    el.style.left = pos.left + 'px';
+                    el.style.top = pos.top + 'px';
+                } else {
+                    el.style.left = defaultLeft;
+                    el.style.top = defaultTop;
+                }
+            } catch (e) {
+                el.style.left = defaultLeft;
+                el.style.top = defaultTop;
+            }
+        }
+
+        // Data extraction
+        let lastJobName = null;
+        let lastInventoryObj = null;
+
+        function extractOverlayData(event) {
+            let wallet = null, truckingXP = null, bonusXP = null, jobName = null;
+            if (event.data && event.data.type === 'data' && event.data.fromTycoonScript && event.data.data) {
+                const data = event.data.data;
+                for (const k of [
+                    "exp_trucking_mechanic","exp_piloting_cargos","exp_farming_mining","exp_business_business",
+                    "exp_trucking_garbage","exp_trucking_trucking","exp_ems_ems","exp_player_racing",
+                    "exp_train_bus","exp_ems_fire","exp_train_train","exp_trucking_postop","exp_piloting_heli",
+                    "exp_business_faction","exp_farming_farming","exp_farming_fishing","exp_hunting_skill",
+                    "exp_piloting_piloting"
+                ]) {
+                    if (typeof data[k] !== "undefined") {
+                        lastXpData = data;
+                        break;
+                    }
+                }
+                wallet = data.wallet ?? null;
+                truckingXP = data.exp_trucking_trucking ?? data.truckingXP ?? null;
+                if (typeof data.job_name !== "undefined" || typeof data.job_title !== "undefined") {
+                    jobName = data.job_name ?? data.job_title ?? null;
+                    if (jobName !== lastJobName) {
+                        lastJobName = jobName;
+                    }
+                } else {
+                    jobName = lastJobName;
+                }
+                let inventoryObj = null;
+                if (data.inventory) {
+                    if (typeof data.inventory === 'string') {
+                        try { inventoryObj = JSON.parse(data.inventory); } catch (e) { inventoryObj = null; }
+                    } else if (typeof data.inventory === 'object') {
+                        inventoryObj = data.inventory;
+                    }
+                    if (inventoryObj) {
+                        lastInventoryObj = inventoryObj;
+                    }
+                }
+                if (!inventoryObj && lastInventoryObj) {
+                    inventoryObj = lastInventoryObj;
+                }
+                if (inventoryObj) {
+                    let found = false;
+                    let lastBonusXP = null;
+                    if (jobName) {
+                        const jobEntry = jobExpTokenMap.find(entry => entry.jobName.toLowerCase() === jobName.toLowerCase());
+                        if (jobEntry) {
+                            const itemName = jobEntry.itemId;
+                            for (const key in inventoryObj) {
+                                if (key.toLowerCase() === itemName.toLowerCase()) {
+                                    const item = inventoryObj[key];
+                                    if (item && typeof item.amount === 'number') {
+                                        lastBonusXP = item.amount;
+                                        if (bonusXP !== lastBonusXP) {
+                                            bonusXP = item.amount;
+                                        }
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (!found && !jobName) {
+                        for (const key in inventoryObj) {
+                            if (/^exp_token_a\|/i.test(key)) {
+                                const item = inventoryObj[key];
+                                if (item && typeof item.amount === 'number') {
+                                    bonusXP = item.amount;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return { wallet, truckingXP, bonusXP, jobName };
+        }
+
+        // On load
+        window.addEventListener('DOMContentLoaded', () => {
+            const overlay = document.getElementById('walletOverlay');
+            restoreOverlayPosition('walletOverlay', overlay, '10vw', '10vh');
+            makeDraggable(overlay);
+            let wallet = localStorage.getItem('walletOverlay_wallet');
+            let truckingXP = localStorage.getItem('walletOverlay_truckingXp');
+            let bonusXP = localStorage.getItem('walletOverlay_bonusXp');
+            wallet = wallet !== null ? Number(wallet) : null;
+            truckingXP = truckingXP !== null ? Number(truckingXP) : null;
+            bonusXP = bonusXP !== null ? Number(bonusXP) : null;
+            overlay.dataset.wallet = wallet != null ? wallet : '';
+            overlay.dataset.truckingXp = truckingXP != null ? truckingXP : '';
+            overlay.dataset.bonusXp = bonusXP != null ? bonusXP : '';
+            if (wallet != null || truckingXP != null || bonusXP != null) {
+                updateWalletOverlay(wallet, truckingXP, bonusXP);
+                overlay.style.display = '';
+            }
+            restoreOverlayAlpha();
+            if (overlay.style.display !== 'none') showTransparencyControl();
+            updateOverlayOptionsPanel();
+        });
+
+        // Focus tracking
+        let overlayIsFocused = false;
+
+        // Message listener
+        window.addEventListener('message', (event) => {
+            const overlay = document.getElementById('walletOverlay');
+
+            function findFocused(obj) {
+                if (!obj || typeof obj !== 'object') return null;
+                if (Object.prototype.hasOwnProperty.call(obj, 'focused')) {
+                    return obj.focused;
+                }
+                for (const key in obj) {
+                    if (typeof obj[key] === 'object') {
+                        const result = findFocused(obj[key]);
+                        if (typeof result === 'boolean') return result;
+                    }
+                }
+                return null;
+            }
+            const focusResult = findFocused(event.data);
+            if (typeof focusResult === 'boolean') {
+                overlayIsFocused = focusResult;
+                if (overlayIsFocused) {
+                    showTransparencyControl();
+                } else {
+                    hideTransparencyControl();
+                }
+            }
+
+            // Data extraction
+            const { wallet, truckingXP, bonusXP, jobName } = extractOverlayData(event);
+            // Previous data
+            const prevWallet = overlay.dataset.wallet ? Number(overlay.dataset.wallet) : null;
+            const prevTruckingXP = overlay.dataset.truckingXp ? Number(overlay.dataset.truckingXp) : null;
+            const prevBonusXP = overlay.dataset.bonusXp ? Number(overlay.dataset.bonusXp) : null;
+            const prevJobName = overlay.dataset.jobName || '';
+
+            // Decide if update
+            const currentWallet = wallet != null ? wallet : prevWallet;
+            const currentTruckingXP = truckingXP != null ? truckingXP : prevTruckingXP;
+            const currentBonusXP = bonusXP != null ? bonusXP : prevBonusXP;
+            const currentJobName = jobName || prevJobName;
+
+            const shouldUpdate =
+                currentWallet !== prevWallet ||
+                currentTruckingXP !== prevTruckingXP ||
+                currentBonusXP !== prevBonusXP ||
+                currentJobName !== prevJobName;
+
+            if (wallet != null || truckingXP != null || bonusXP != null || jobName) {
+                updateWalletOverlay(currentWallet, currentTruckingXP, currentBonusXP, currentJobName);
+                overlay.dataset.wallet = currentWallet != null ? currentWallet : '';
+                overlay.dataset.truckingXp = currentTruckingXP != null ? currentTruckingXP : '';
+                overlay.dataset.bonusXp = currentBonusXP != null ? currentBonusXP : '';
+                overlay.dataset.jobName = currentJobName;
+                overlay.style.display = '';
+            }
+        });
+
+        // Show XP popup
+        function showXpPopup(gainedXp) {
+            const popup = document.getElementById('xpEarnedPopup');
+            const overlay = document.getElementById('walletOverlay');
+            const overlayRect = overlay.getBoundingClientRect();
+            const popupX = overlayRect.right - 115;
+            const popupY = overlayRect.top - 15;
+            popup.style.left = `${popupX}px`;
+            popup.style.top = `${popupY}px`;
+            popup.textContent = `EXP +${Math.floor(gainedXp)}`;
+            popup.style.opacity = '1';
+            popup.style.transform = 'translateY(0)';
+            popup.style.display = 'block';
+
+            setTimeout(() => {
+                popup.style.opacity = '0';
+                popup.style.transform = 'translateY(-10px)';
+            }, 1000);
+            setTimeout(() => {
+                popup.style.display = 'none';
+            }, 1500);
+        }
+
+        // Initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            const overlay = document.getElementById('walletOverlay');
+            restoreOverlayPosition('walletOverlay', overlay, '10vw', '10vh');
+            makeDraggable(overlay);
+            let wallet = localStorage.getItem('walletOverlay_wallet');
+            let truckingXP = localStorage.getItem('walletOverlay_truckingXp');
+            let bonusXP = localStorage.getItem('walletOverlay_bonusXp');
+            wallet = wallet !== null ? Number(wallet) : null;
+            truckingXP = truckingXP !== null ? Number(truckingXP) : null;
+            bonusXP = bonusXP !== null ? Number(bonusXP) : null;
+            overlay.dataset.wallet = wallet != null ? wallet : '';
+            overlay.dataset.truckingXp = truckingXP != null ? truckingXP : '';
+            overlay.dataset.bonusXp = bonusXP != null ? bonusXP : '';
+            if (wallet != null || truckingXP != null || bonusXP != null) {
+                updateWalletOverlay(wallet, truckingXP, bonusXP);
+                overlay.style.display = '';
+            }
+            restoreOverlayAlpha();
+            if (overlay.style.display !== 'none') showTransparencyControl();
+        });
+
+        // the core update function
+        function updateWalletOverlay(wallet, truckingXP, bonusXP, jobName) {
+            const overlay = document.getElementById('walletOverlay');
+
+            // Save data
+            try {
+                if (wallet != null && !isNaN(wallet)) localStorage.setItem('walletOverlay_wallet', wallet);
+                if (truckingXP != null && !isNaN(truckingXP)) localStorage.setItem('walletOverlay_truckingXp', truckingXP);
+                if (bonusXP != null && !isNaN(bonusXP)) localStorage.setItem('walletOverlay_bonusXp', bonusXP);
+                if (jobName) localStorage.setItem('walletOverlay_jobName', jobName);
+            } catch (e) {}
+
+            // Map for XP
+            const jobExpFieldMap = {
+                "Trucker": "exp_trucking_trucking",
+                "Mechanic": "exp_trucking_mechanic",
+                "Garbage Collector": "exp_trucking_garbage",
+                "PostOP Driver": "exp_trucking_postop",
+                "Airline Pilot": "exp_piloting_piloting",
+                "Helicopter Pilot": "exp_piloting_heli",
+                "Cargo Pilot": "exp_piloting_cargos",
+                "Bus Driver": "exp_train_bus",
+                "Train Conductor": "exp_train_train",
+                "EMS / Paramedic": "exp_ems_ems",
+                "Firefighter": "exp_ems_fire",
+                "Businesses": "exp_business_business",
+                "Street Racer": "exp_player_racing",
+                "Farmer": "exp_farming_farming",
+                "Fisherman": "exp_farming_fishing",
+                "Miner": "exp_farming_mining",
+                "Wildlife Hunter": "exp_hunting_skill"
+            };
+
+            let xpVal = null;
+            if (jobName && typeof jobExpFieldMap[jobName] === "string" && lastXpData) {
+                const xpField = jobExpFieldMap[jobName];
+                if (typeof lastXpData[xpField] !== "undefined") {
+                    xpVal = Number(lastXpData[xpField]);
+                }
+            }
+            if (xpVal == null && typeof truckingXP !== "undefined" && truckingXP !== null) {
+                xpVal = Number(truckingXP);
+            }
+            let xpPercent = (xpVal != null && !isNaN(xpVal)) ? (Math.max(0, Math.min(100, (xpVal / 1_000_000) * 100))) : 0;
+
+            // --- EXP Earned (pop-up) ---
+            const opts = getOverlayOptions();
+            if (opts.showExpEarned) {
+                if (xpVal != null && typeof lastXpValue === 'number') {
+                    const gained = xpVal - lastXpValue;
+                    if (gained > 0) {
+                        totalXpGained += gained;
+                        showXpPopup(gained);
+                    }
+                }
+                lastXpValue = xpVal;
+            }
+
+            // Build overlay fields
+            let fields = [];
+            if (opts.showJob && jobName) 
+                fields.push(`<b>Job:</b> <span style='font-size:1.1em;color:#ffa07a;'>${jobName}</span>`);
+            if (opts.showLevel) {
+                let level = (xpVal != null && !isNaN(xpVal)) ? Math.floor((Math.sqrt(1 + 8 * xpVal / 5) - 1) / 2) : null;
+                fields.push(`<b>Level:</b> <span style='font-size:1.1em;color:#b0e0e6;'>${level != null && level >= 0 ? level : 'N/A'}</span>`);
+            }
+            if (opts.showBonusXP) 
+                fields.push(`<b>Bonus XP Left:</b> <span style='font-size:1.1em;color:#ffd700;'>${bonusXP != null && !isNaN(bonusXP) ? Number(bonusXP).toLocaleString() : 'N/A'}</span>`);
+            if (opts.showRawXP) 
+                fields.push(`<b>Total XP:</b> <span style='font-size:1.1em;color:#ffb347;'>${xpVal != null && !isNaN(xpVal) ? Math.floor(xpVal).toLocaleString() : 'N/A'}</span>`);
+            if (opts.showXPPercent) 
+                fields.push(`<b>% to 1m XP:</b> <span style="font-size:1.1em;color:#8cf0ff;">${xpPercent.toFixed(2)}%</span>`);
+
+            if (opts.showWallet) 
+                fields.push(`<b>Wallet:</b> <span style="font-size:1.3em;color:#7cff7c;">${wallet != null && !isNaN(wallet) ? formatWallet(wallet) : 'N/A'}</span>`);
+
+            // --- Perk Chance Calculation ---
+            let perkChancePercent = 0;
+            if (xpVal != null && !isNaN(xpVal) && lastXpValue != null && !isNaN(lastXpValue)) {
+                const earnedExp = xpVal - lastXpValue;
+                if (xpVal < 1000000 && earnedExp > 0) {
+                    perkChancePercent = (earnedExp * 100) / (1000000 - xpVal);
+                } else {
+                    perkChancePercent = 0;
+                }
+            }
+            fields.push(`<b>Perk Chance:</b> <span style='font-size:1.1em;color:#ff69b4;'>${perkChancePercent.toFixed(2)}%</span>`);
+
+            // Update overlay
+            document.getElementById('walletOverlay').innerHTML = fields.join('<br>');
+            document.getElementById('walletOverlay').style.display = '';
+            setOverlayAlpha(slider.value);
+        }
+
+    </script>
 </body>
 </html>
