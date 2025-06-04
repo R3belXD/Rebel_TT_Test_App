@@ -14,7 +14,7 @@
     position: fixed;
     top: 20px;
     left: 20px;
-    width: 300px;
+    width: 350px;
     padding: 10px;
     z-index: 9999;
     background-color: rgba(30, 30, 30, 0.92);
@@ -55,43 +55,41 @@
     margin-left: 5px;
   }
 
-  /* Hidden class for toggle */
+  /* Hidden class for toggle control */
   .hidden {
     display: none;
   }
 
-  /* Settings Panel */
+  /* Settings Panel styles */
   #settings-panel {
     position: fixed;
-    background-color: #333;
-    color: white;
-    padding: 10px;
-    border: 1px solid #555;
-    width: 250px;
-    z-index: 9999;
     top: 60px;
-    left: 320px;
+    left: 380px;
+    width: 300px;
+    background: #333;
+    color: #fff;
+    padding: 10px;
     border-radius: 8px;
+    border: 1px solid #555;
+    z-index: 9999;
   }
-  #settings-panel input[type="text"],
-  #settings-panel input[type="range"] {
-    width: 100%;
-    padding: 4px;
-    margin-top: 4px;
-    margin-bottom: 10px;
-    background-color: #222;
-    color: white;
-    border: 1px solid #666;
+  #settings-panel h3 {
+    margin-top: 0;
   }
   #settings-panel label {
-    display: block;
+    display: flex;
+    align-items: center;
     margin-top: 8px;
   }
-  #toggle-fields input[type="checkbox"] {
+  #settings-panel input[type="checkbox"] {
     margin-right: 8px;
   }
-
-  /* EXP Popup */
+  #settings-panel button {
+    margin-top: 10px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  /* Popup for XP gain (optional) */
   .exp-popup {
     position: absolute;
     top: -20px;
@@ -108,6 +106,7 @@
 </head>
 <body>
 
+<!-- Main HUD container -->
 <div id="hud-container">
   <div id="hud-header">
     <h3 id="hud-title">Transport Tycoon HUD</h3>
@@ -138,18 +137,10 @@
       <span class="label">Session Duration:</span>
       <span class="value" id="session-value">Loading...</span>
     </div>
-    <div class="hud-field" id="licenses-field">
-      <span class="label">Licenses:</span>
-      <div id="licenses-list">Loading...</div>
-    </div>
-    <div class="hud-field" id="skills-field">
-      <span class="label">Skills:</span>
-      <div id="skills-list">Loading...</div>
-    </div>
   </div>
-  <div class="exp-popup" id="exp-popup">+0 XP</div>
 </div>
 
+<!-- Settings menu with checkboxes -->
 <div id="settings-panel" class="hidden">
   <h3>Settings</h3>
   <label>Player ID:
@@ -158,15 +149,22 @@
   <label>API Key:
     <input type="text" id="api-key" placeholder="Enter API Key"/>
   </label>
+  <h3>Toggle Fields</h3>
+  <label><input type="checkbox" id="toggle-job" checked/> Job</label>
+  <label><input type="checkbox" id="toggle-level" checked/> Level</label>
+  <label><input type="checkbox" id="toggle-totalxp" checked/> Total XP</label>
+  <label><input type="checkbox" id="toggle-bonusxp" checked/> Bonus XP</label>
+  <label><input type="checkbox" id="toggle-sotd" checked/> SOTD</label>
+  <label><input type="checkbox" id="toggle-session" checked/> Session</label>
   <button id="save-settings">Save</button>
 </div>
 
+<!-- Drag handle for HUD -->
 <script>
-  // --- Draggable HUD ---
   const hud = document.getElementById('hud-container');
   const handle = document.getElementById('hud-header');
-  handle.style.cursor = 'move';
-
+  let isDragging = false;
+  let offsetX, offsetY;
   handle.addEventListener('mousedown', (e) => {
     isDragging = true;
     offsetX = e.clientX - hud.offsetLeft;
@@ -183,162 +181,116 @@
       hud.style.top = (e.clientY - offsetY) + 'px';
     }
   });
-  let isDragging = false;
-  let offsetX, offsetY;
+</script>
 
-  // --- Settings ---
-const settingsButton = document.getElementById('settings-button');
-const settingsPanel = document.getElementById('settings-panel');
-const saveSettingsBtn = document.getElementById('save-settings');
-const playerIdInput = document.getElementById('player-id');
-const apiKeyInput = document.getElementById('api-key');
-
-const storedPlayerId = localStorage.getItem('tt-player-id');
-const storedApiKey = localStorage.getItem('tt-api-key');
-
-if (storedPlayerId) playerIdInput.value = storedPlayerId;
-if (storedApiKey) apiKeyInput.value = storedApiKey;
-
-settingsButton.onclick = () => {
-  settingsPanel.classList.toggle('hidden');
-};
-
-saveSettingsBtn.onclick = () => {
-  localStorage.setItem('tt-player-id', playerIdInput.value);
-  localStorage.setItem('tt-api-key', apiKeyInput.value);
-  alert('Settings saved!');
-  fetchAllData();
-  settingsPanel.classList.add('hidden');
-};
-
-// --- Utility functions ---
-function showExpPopup(amount) {
-  const popup = document.getElementById('exp-popup');
-  popup.textContent = `+${amount} XP`;
-  popup.style.display = 'block';
-  setTimeout(() => { popup.style.display = 'none'; }, 2000);
-}
-
-// --- Fetch functions ---
-async function fetchAllData() {
-  const playerId = localStorage.getItem('tt-player-id');
-  const apiKey = localStorage.getItem('tt-api-key');
-
-  if (!playerId || !apiKey) {
-    alert('Please set your Player ID and API Key in settings.');
-    return;
-  }
-
-  await fetchSOTD();
-  await fetchUserInfo(playerId);
-  await fetchSessionInfo('2epova'); // replace with your server name
-  await fetchPlayerAdvData(playerId);
-}
-
-// Fetch SOTD
-async function fetchSOTD() {
-  try {
-    const res = await fetch('https://ttycoon.eu/api/v1/serverdata/sotd');
-    const data = await res.json();
-    if (res.ok && data.status === 200) {
-      const s = data.data;
-      document.getElementById('sotd-value').innerHTML = `
-        <b>${s.skill}</b> + <b>${s.bonus}%</b>
-      `;
-    } else {
-      document.getElementById('sotd-value').textContent = 'Error fetching SOTD';
+<script>
+  // Load saved toggle states
+  const toggleKeys = ['job', 'level', 'totalxp', 'bonusxp', 'sotd', 'session'];
+  toggleKeys.forEach(k => {
+    const saved = localStorage.getItem(`tt-toggle-${k}`);
+    if (saved !== null) {
+      document.getElementById(`toggle-${k}`).checked = saved === 'true';
     }
-  } catch (err) {
-    document.getElementById('sotd-value').textContent = 'Error fetching SOTD';
-  }
-}
+  });
 
-// Fetch User Info (job, level, XP)
-async function fetchUserInfo(playerId) {
-  try {
-    const res = await fetch(`https://ttycoon.eu/api/v1/user/status?playerId=${playerId}`);
-    const data = await res.json();
-    if (res.ok && data.status === 200) {
-      const user = data;
-      document.getElementById('job-value').textContent = user.job || 'Unknown';
+  // Save button handler
+  document.getElementById('save-settings').onclick = () => {
+    // Save Player ID and API Key
+    localStorage.setItem('tt-player-id', document.getElementById('player-id').value);
+    localStorage.setItem('tt-api-key', document.getElementById('api-key').value);
+    // Save toggles
+    toggleKeys.forEach(k => {
+      localStorage.setItem(`tt-toggle-${k}`, document.getElementById(`toggle-${k}`).checked);
+    });
+    alert('Settings saved!');
+    fetchAllData();
+    document.getElementById('settings-panel').classList.add('hidden');
+  };
 
-      const level = user.level || 0;
-      const currentXP = user.currentXP || 0;
-      const nextXP = user.nextLevelXP || 0;
-      document.getElementById('level-value').textContent = `${level} (${currentXP}/${nextXP}xp)`;
+  // Toggle menu open/close
+  document.getElementById('settings-button').onclick = () => {
+    document.getElementById('settings-panel').classList.toggle('hidden');
+  };
 
-      document.getElementById('totalxp-value').textContent = user.totalXP || 0;
-      document.getElementById('bonusxp-value').textContent = user.bonusXP || 0;
-    } else {
-      document.getElementById('job-value').textContent = 'Error';
+  // Fetch and update all data
+  async function fetchAllData() {
+    const playerId = localStorage.getItem('tt-player-id');
+    const apiKey = localStorage.getItem('tt-api-key');
+    if (!playerId || !apiKey) {
+      alert('Please set Player ID and API Key in settings.');
+      return;
     }
-  } catch (err) {
-    document.getElementById('job-value').textContent = 'Error';
-  }
-}
-
-// Fetch Session Duration
-async function fetchSessionInfo(serverName) {
-  try {
-    const res = await fetch('https://ttycoon.eu/api/v1/serverdata/sessions');
-    const sessions = await res.json();
-    const serverSessions = sessions.filter(s => s.server === serverName && s.active);
-    if (serverSessions.length > 0) {
-      const latest = serverSessions[serverSessions.length - 1];
-      document.getElementById('session-value').textContent = `${Math.floor(latest.sessionDuration / 60)} min`;
-    } else {
-      document.getElementById('session-value').textContent = 'No active session';
-    }
-  } catch (err) {
-    document.getElementById('session-value').textContent = 'Error';
-  }
-}
-
-// Fetch detailed player data (licenses, skills, streaks)
-async function fetchPlayerAdvData(playerId) {
-  try {
-    const res = await fetch(`https://ttycoon.eu/api/v1/playerdata/dataadv?id=${playerId}&ignoreCache=jJ6IrXz3CwEfFYi05kmMWG5tkT6rWWwhragfM`);
-    const data = await res.json();
-    if (res.ok && data.code === "200") {
-      const pdata = data.data;
-      
-      // Licenses
-      const licensesDiv = document.getElementById('licenses-list');
-      licensesDiv.innerHTML = '';
-      for (const [license, timestamp] of Object.entries(pdata.data.licenses)) {
-        const licName = license.replace(/_/g, ' ');
-        const hasLicense = timestamp > 0;
-        const span = document.createElement('div');
-        span.textContent = `${licName}: ${hasLicense ? 'Yes' : 'No'}`;
-        licensesDiv.appendChild(span);
-      }
-
-      // Skills
-      const skillsDiv = document.getElementById('skills-list');
-      skillsDiv.innerHTML = '';
-      pdata.parsedSkills.forEach(skill => {
-        const skillName = skill.name;
-        const currentLevel = skill.skills[0].currentLevel;
-        const percentage = skill.skills[0].percentage;
-        const div = document.createElement('div');
-        div.textContent = `${skillName}: Level ${currentLevel} (${percentage}%)`;
-        skillsDiv.appendChild(div);
+    // Fetch basic info
+    fetch(`https://ttycoon.eu/api/v1/playerdata?id=${playerId}`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('job-value').textContent = data.lastJob || 'Unknown';
+        document.getElementById('username').textContent = data.username || '';
+        toggleField('job', data.lastJob);
       });
-    } else {
-      document.getElementById('licenses-list').textContent = 'Error fetching data';
-      document.getElementById('skills-list').textContent = 'Error fetching data';
-    }
-  } catch (err) {
-    document.getElementById('licenses-list').textContent = 'Error fetching data';
-    document.getElementById('skills-list').textContent = 'Error fetching data';
+    // Fetch advanced info
+    fetch(`https://ttycoon.eu/api/v1/playerdata/dataadv?id=${playerId}&ignoreCache=jJ6IrXz3CwEfFYi05kmMWG5tkT6rWWwhragfM`)
+      .then(res => res.json())
+      .then(d => {
+        const data = d.data;
+        // Player level and exp
+        const pSkill = data.parsedSkills.find(s => s.name === 'Player');
+        if (pSkill) {
+          const lvl = pSkill.skills[0].currentLevel;
+          const exp = pSkill.skills[0].currentLevelExp;
+          const nextExp = pSkill.skills[0].nextLevelExp;
+          document.getElementById('level-value').textContent = `${lvl} (${exp}/${nextExp} XP)`;
+          toggleField('level', true);
+        } else {
+          toggleField('level', false);
+        }
+      });
+    // Fetch SOTD
+    fetch('https://ttycoon.eu/api/v1/serverdata/sotd')
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 200) {
+          document.getElementById('sotd-value').innerHTML = `
+            <b>${data.data.skill}</b> + <b>${data.data.bonus}%</b>
+          `;
+          toggleField('sotd', true);
+        }
+      });
+    // Fetch server sessions
+    fetch('https://ttycoon.eu/api/v1/serverdata/sessions')
+      .then(res => res.json())
+      .then(sessions => {
+        const activeSessions = sessions.filter(s => s.server === '2epova' && s.active);
+        if (activeSessions.length > 0) {
+          const latest = activeSessions[activeSessions.length - 1];
+          document.getElementById('session-value').textContent = `${Math.floor(latest.sessionDuration / 60)} min`;
+          toggleField('session', true);
+        } else {
+          document.getElementById('session-value').textContent = 'No active session';
+          toggleField('session', false);
+        }
+      });
   }
-}
 
-// Initial fetch
-fetchAllData();
+  // Function to toggle field visibility based on checkbox
+  function toggleField(field, show) {
+    document.getElementById(`${field}-field`).style.display = show ? '' : 'none';
+  }
 
-// Refresh every 60 seconds
-setInterval(fetchAllData, 60000);
+  // Add event listeners for checkboxes to toggle fields immediately
+  toggleKeys.forEach(k => {
+    document.getElementById(`toggle-${k}`).addEventListener('change', () => {
+      const checked = document.getElementById(`toggle-${k}`).checked;
+      localStorage.setItem(`tt-toggle-${k}`, checked);
+      toggleField(k, checked);
+    });
+  });
+
+  // Initial fetch
+  fetchAllData();
+
+  // Refresh every 60 seconds
+  setInterval(fetchAllData, 60000);
 </script>
 
 </body>
