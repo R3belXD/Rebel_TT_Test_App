@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Transport Tycoon HUD</title>
+<title>Transport Tycoon HUD v2</title>
 <style>
   body {
     margin: 0;
@@ -79,9 +79,12 @@
     border: 1px solid #555;
     width: 250px;
     z-index: 9999;
-    background-color: rgba(30, 30, 30, 0.92);
-    border: 4px solid transparent;
-    border-image: linear-gradient(to left, cyan, purple) 1;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+  /* Hidden class for toggling visibility */
+  .hidden {
+    display: none;
   }
   #settings-panel input[type="text"],
   #settings-panel input[type="range"] {
@@ -93,16 +96,14 @@
     border: 1px solid #666;
     width: calc(100% - 12px);
   }
-  .hidden {
-    display: none;
-  }
 </style>
 </head>
 <body>
+
 <div id="hud-container">
   <div id="hud-header">
     <span>Transport Tycoon HUD</span>
-    <button id="settings-button">⚙️</button>
+    <button id="settings-button" title="Toggle Settings">⚙️</button>
   </div>
   <div id="hud-content">
     <div id="job-field" class="hud-field">
@@ -127,9 +128,9 @@
       <span id="sotd-value">Loading...</span>
     </div>
   </div>
-  <div id="exp-earned-popup" class="exp-popup">+0 XP</div>
 </div>
 
+<!-- Settings menu -->
 <div id="settings-panel" class="hidden">
   <h3>Settings</h3>
   <label>Player ID:</label><br/>
@@ -150,58 +151,43 @@
     const settingsButton = document.getElementById('settings-button');
     const settingsPanel = document.getElementById('settings-panel');
 
-    const apiKeyInput = document.getElementById('api-key-input');
-    const playerIdInput = document.getElementById('player-id-input');
-
-    // Load saved API Key and Player ID
+    // Load saved data
     const savedApiKey = localStorage.getItem('tt-api-key') || '';
     const savedPlayerId = localStorage.getItem('tt-player-id') || '';
-
-    apiKeyInput.value = savedApiKey;
-    playerIdInput.value = savedPlayerId;
+    document.getElementById('api-key-input').value = savedApiKey;
+    document.getElementById('player-id-input').value = savedPlayerId;
 
     // Save inputs
-    apiKeyInput.addEventListener('input', () => {
-      localStorage.setItem('tt-api-key', apiKeyInput.value);
+    document.getElementById('api-key-input').addEventListener('input', () => {
+      localStorage.setItem('tt-api-key', document.getElementById('api-key-input').value);
     });
-    playerIdInput.addEventListener('input', () => {
-      localStorage.setItem('tt-player-id', playerIdInput.value);
+    document.getElementById('player-id-input').addEventListener('input', () => {
+      localStorage.setItem('tt-player-id', document.getElementById('player-id-input').value);
     });
 
-    // Toggle settings panel
+    // Toggle settings menu using class 'hidden'
     document.getElementById('settings-button').onclick = () => {
       document.getElementById('settings-panel').classList.toggle('hidden');
     };
 
-    // Handle toggle checkboxes
+    // Toggle display of fields based on checkboxes
     ['job','level','bonusxp','totalxp'].forEach(id => {
       document.getElementById(`toggle-${id}`).addEventListener('change', () => {
         document.getElementById(`${id}-field`).style.display = document.getElementById(`toggle-${id}`).checked ? 'block' : 'none';
       });
     });
-
-    // Handle background transparency
+    // Background transparency
     document.getElementById('bg-opacity').addEventListener('input', () => {
       const opacity = document.getElementById('bg-opacity').value/100;
       document.getElementById('hud-container').style.backgroundColor = `rgba(50,50,50,${opacity})`;
     });
 
-    // Show XP popup
-    function showExpPopup(amount) {
-      const popup = document.getElementById('exp-earned-popup');
-      popup.textContent = `+${amount} XP`;
-      popup.style.display = 'block';
-      setTimeout(() => { popup.style.display='none'; }, 2000);
-    }
-
-    // Fetch data from dataadv endpoint
+    // Fetch player data
     async function fetchPlayerData() {
       const playerId = localStorage.getItem('tt-player-id');
       const apiKey = localStorage.getItem('tt-api-key');
       if (!playerId || !apiKey) return;
-
       const url = `https://ttycoon.eu/api/v1/playerdata/dataadv?id=${encodeURIComponent(playerId)}&ignoreCache=EvejE53OFcuGX454n2IRYa2bMAvG5jXH3ZAM9`;
-      
       try {
         const res = await fetch(url, {
           headers: {
@@ -220,34 +206,29 @@
       }
     }
 
-    // Fetch SOTD data (Job %), using same Player ID
+    // Fetch SOTD data
     async function fetchSOTD() {
-      const playerId = localStorage.getItem('tt-player-id');
-      if (!playerId) {
-        document.getElementById('sotd-value').textContent = 'N/A';
-        return;
-      }
       try {
         const res = await fetch('https://ttycoon.eu/api/v1/serverdata/sotd');
         if (!res.ok) throw new Error('Network response not ok');
         const data = await res.json();
-        // Assuming data has structure like { jobPercentage: 75 }
         const jobPercent = data.jobPercentage !== undefined ? data.jobPercentage : 'N/A';
         document.getElementById('sotd-value').textContent = jobPercent + '%';
       } catch (err) {
         console.error('Error fetching sotd:', err);
-        document.getElementById('sotd-value').textContent = 'Error';
+        document.getElementById('sotd-value').textContent='Error';
       }
     }
 
-    // Fetch periodically
+    // Periodic fetch
     setInterval(fetchPlayerData, 5000);
-    setInterval(fetchSOTD, 60000); // every minute
+    setInterval(fetchSOTD, 60000);
+    fetchPlayerData(); fetchSOTD();
 
-    // Make draggable
-    function makeDraggable(el, handle, onDrag) {
+    // Make draggable window and keep settings panel aligned
+    function makeDraggable(el, handle, onMove) {
       let offsetX=0, offsetY=0, dragging=false;
-      handle.onmousedown = e => {
+      handle.onmousedown=e => {
         dragging=true; offsetX=e.clientX - el.offsetLeft; offsetY=e.clientY - el.offsetTop;
         document.body.style.userSelect='none';
       };
@@ -255,19 +236,21 @@
         if (dragging) {
           const x=e.clientX - offsetX, y=e.clientY - offsetY;
           el.style.left=x+'px'; el.style.top=y+'px';
-          if (onDrag) onDrag(x,y);
+          if (onMove) onMove(x,y);
         }
       };
       document.onmouseup=()=>{ dragging=false; document.body.style.userSelect=''; };
     }
-    makeDraggable(document.getElementById('hud-container'), document.getElementById('hud-header'), (x,y) => {
-      document.getElementById('settings-panel').style.left=`${x+document.getElementById('hud-container').offsetWidth+10}px`;
+    const container = document.getElementById('hud-container');
+    const handle = document.getElementById('hud-header');
+    makeDraggable(container, handle, (x,y) => {
+      document.getElementById('settings-panel').style.left=`${x+container.offsetWidth+10}px`;
       document.getElementById('settings-panel').style.top=`${y}px`;
     });
-    // initial position
-    const initX=document.getElementById('hud-container').offsetLeft;
-    const initY=document.getElementById('hud-container').offsetTop;
-    document.getElementById('settings-panel').style.left=`${initX+document.getElementById('hud-container').offsetWidth+10}px`;
+    // set initial position for settings panel
+    const initX=container.offsetLeft;
+    const initY=container.offsetTop;
+    document.getElementById('settings-panel').style.left=`${initX+container.offsetWidth+10}px`;
     document.getElementById('settings-panel').style.top=`${initY}px`;
   });
 </script>
