@@ -2,189 +2,344 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>👑_𝕭𝖎𝖙𝖍_👑</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Transport Tycoon HUD</title>
 <style>
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background: transparent;
-  color: #f0f0f0;
-}
-/* Your overlay style */
-#walletOverlay {
-  display: block;
-  position: fixed;
-  top: 10vh;
-  left: 10vw;
-  width: 220px;
-  min-height: 60px;
-  max-height: 30vh;
-  background: rgba(30,30,30,0.92);
-  color: #fff;
-  padding: 1rem 1.2rem;
-  font-size: 1.2rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.25);
-  border: 4px solid transparent;
-  border-image: linear-gradient(to right, cyan, purple) 1;
-  z-index: 9999;
-  overflow: auto;
-}
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
 
-/* Control panel for API & Player ID */
-#apiContainer {
-  display: block;
-  position: fixed;
-  top: calc(10vh + 250px);
-  left: 10vw;
-  background: rgba(35,39,43,0.7);
-  padding: 0.5rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-  z-index: 9999;
-  max-width: 300px;
-}
-#apiContainer input {
-  width: 100%;
-  margin-bottom: 0.5rem;
-  padding: 0.4rem;
-  border-radius: 6px;
-  border: 1px solid #444;
-}
-#apiContainer button {
-  width: 100%;
-  padding: 0.5rem;
-  border-radius: 6px;
-  border: none;
-  background-color: #2d8cf0;
-  color: #fff;
-  font-weight: bold;
-  cursor: pointer;
-}
-#apiContainer button:hover {
-  background-color: #1e6fcf;
-}
+  #hud-container {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 300px;
+    padding: 10px;
+    z-index: 9999;
+    background-color: rgba(30, 30, 30, 0.92);
+    border: 4px solid transparent;
+    border-image: linear-gradient(to right, cyan, purple) 1;
+    border-radius: 10px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+    color: white;
+    font-size: 0.9em;
+  }
 
-/* EXP popup */
-#xpEarnedPopup {
-  position: fixed;
-  background: rgba(26, 148, 2, 0.9);
-  color: #f1efef;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-weight: bold;
-  font-size: 1rem;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 99999;
-  transition: opacity 0.5s, transform 0.5s;
-}
+  #hud-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+  }
+  #hud-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 0;
+  }
+  #settings-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2em;
+    cursor: pointer;
+  }
+
+  .hud-field {
+    margin: 5px 0;
+  }
+  .label {
+    font-weight: bold;
+  }
+  .value {
+    margin-left: 5px;
+  }
+
+  /* Hidden class for toggle */
+  .hidden {
+    display: none;
+  }
+
+  /* Settings Panel */
+  #settings-panel {
+    position: fixed;
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    border: 1px solid #555;
+    width: 250px;
+    z-index: 9999;
+    top: 60px;
+    left: 320px;
+    border-radius: 8px;
+  }
+  #settings-panel input[type="text"],
+  #settings-panel input[type="range"] {
+    width: 100%;
+    padding: 4px;
+    margin-top: 4px;
+    margin-bottom: 10px;
+    background-color: #222;
+    color: white;
+    border: 1px solid #666;
+  }
+  #settings-panel label {
+    display: block;
+    margin-top: 8px;
+  }
+  #toggle-fields input[type="checkbox"] {
+    margin-right: 8px;
+  }
+
+  /* EXP Popup */
+  .exp-popup {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    background: rgba(26, 148, 2, 0.9);
+    color: #f1efef;
+    padding: 6px 8px;
+    border-radius: 8px;
+    font-size: 1em;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    display: none;
+  }
 </style>
 </head>
 <body>
 
-<!-- Main overlay -->
-<div id="walletOverlay" style="display:none;">Loading data...</div>
-
-<!-- API & Player ID form -->
-<div id="apiContainer">
-  <label for="playerIdInput">Player ID:</label>
-  <input type="text" id="playerIdInput" placeholder="Enter Player ID" />
-  <label for="apiKeyInput">API Key:</label>
-  <input type="text" id="apiKeyInput" placeholder="Enter API Key" />
-  <button id="saveBtn">Save & Start</button>
+<div id="hud-container">
+  <div id="hud-header">
+    <h3 id="hud-title">Transport Tycoon HUD</h3>
+    <button id="settings-button">⚙️</button>
+  </div>
+  <div id="hud-content">
+    <div class="hud-field" id="job-field">
+      <span class="label">Job:</span>
+      <span class="value" id="job-value">Loading...</span>
+    </div>
+    <div class="hud-field" id="level-field">
+      <span class="label">Level:</span>
+      <span class="value" id="level-value">Loading...</span>
+    </div>
+    <div class="hud-field" id="totalxp-field">
+      <span class="label">Total XP:</span>
+      <span class="value" id="totalxp-value">Loading...</span>
+    </div>
+    <div class="hud-field" id="bonusxp-field">
+      <span class="label">Bonus XP:</span>
+      <span class="value" id="bonusxp-value">Loading...</span>
+    </div>
+    <div class="hud-field" id="sotd-field">
+      <span class="label">SOTD:</span>
+      <span class="value" id="sotd-value">Loading...</span>
+    </div>
+    <div class="hud-field" id="session-field">
+      <span class="label">Session Duration:</span>
+      <span class="value" id="session-value">Loading...</span>
+    </div>
+    <div class="hud-field" id="licenses-field">
+      <span class="label">Licenses:</span>
+      <div id="licenses-list">Loading...</div>
+    </div>
+    <div class="hud-field" id="skills-field">
+      <span class="label">Skills:</span>
+      <div id="skills-list">Loading...</div>
+    </div>
+  </div>
+  <div class="exp-popup" id="exp-popup">+0 XP</div>
 </div>
 
-<!-- EXP popup -->
-<div id="xpEarnedPopup"></div>
+<div id="settings-panel" class="hidden">
+  <h3>Settings</h3>
+  <label>Player ID:
+    <input type="text" id="player-id" placeholder="Enter Player ID"/>
+  </label>
+  <label>API Key:
+    <input type="text" id="api-key" placeholder="Enter API Key"/>
+  </label>
+  <button id="save-settings">Save</button>
+</div>
 
 <script>
-(function() {
-  const overlay = document.getElementById('walletOverlay');
-  const playerIdInput = document.getElementById('playerIdInput');
-  const apiKeyInput = document.getElementById('apiKeyInput');
-  const saveBtn = document.getElementById('saveBtn');
-  const popup = document.getElementById('xpEarnedPopup');
+  // --- Draggable HUD ---
+  const hud = document.getElementById('hud-container');
+  const handle = document.getElementById('hud-header');
+  handle.style.cursor = 'move';
 
-  let playerId = localStorage.getItem('playerId') || '';
-  let apiKey = localStorage.getItem('apiKey') || '';
-
-  // Set inputs from storage
-  playerIdInput.value = playerId;
-  apiKeyInput.value = apiKey;
-
-  // Save button
-  document.getElementById('saveBtn').addEventListener('click', () => {
-    playerId = playerIdInput.value.trim();
-    apiKey = apiKeyInput.value.trim();
-    localStorage.setItem('playerId', playerId);
-    localStorage.setItem('apiKey', apiKey);
-    startFetching();
+  handle.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    offsetX = e.clientX - hud.offsetLeft;
+    offsetY = e.clientY - hud.offsetTop;
+    document.body.style.userSelect = 'none';
   });
+  document.addEventListener('mouseup', () => {
+    isDragging = false;
+    document.body.style.userSelect = '';
+  });
+  document.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+      hud.style.left = (e.clientX - offsetX) + 'px';
+      hud.style.top = (e.clientY - offsetY) + 'px';
+    }
+  });
+  let isDragging = false;
+  let offsetX, offsetY;
 
-  // Your API URL (replace with real endpoint)
-  function getApiUrl() {
-    return `https://your.api.endpoint/player/${encodeURIComponent(playerId)}?api_key=${encodeURIComponent(apiKey)}`;
+  // --- Settings ---
+const settingsButton = document.getElementById('settings-button');
+const settingsPanel = document.getElementById('settings-panel');
+const saveSettingsBtn = document.getElementById('save-settings');
+const playerIdInput = document.getElementById('player-id');
+const apiKeyInput = document.getElementById('api-key');
+
+const storedPlayerId = localStorage.getItem('tt-player-id');
+const storedApiKey = localStorage.getItem('tt-api-key');
+
+if (storedPlayerId) playerIdInput.value = storedPlayerId;
+if (storedApiKey) apiKeyInput.value = storedApiKey;
+
+settingsButton.onclick = () => {
+  settingsPanel.classList.toggle('hidden');
+};
+
+saveSettingsBtn.onclick = () => {
+  localStorage.setItem('tt-player-id', playerIdInput.value);
+  localStorage.setItem('tt-api-key', apiKeyInput.value);
+  alert('Settings saved!');
+  fetchAllData();
+  settingsPanel.classList.add('hidden');
+};
+
+// --- Utility functions ---
+function showExpPopup(amount) {
+  const popup = document.getElementById('exp-popup');
+  popup.textContent = `+${amount} XP`;
+  popup.style.display = 'block';
+  setTimeout(() => { popup.style.display = 'none'; }, 2000);
+}
+
+// --- Fetch functions ---
+async function fetchAllData() {
+  const playerId = localStorage.getItem('tt-player-id');
+  const apiKey = localStorage.getItem('tt-api-key');
+
+  if (!playerId || !apiKey) {
+    alert('Please set your Player ID and API Key in settings.');
+    return;
   }
 
-  let fetchInterval = null;
-  async function fetchData() {
-    if (!playerId || !apiKey) {
-      overlay.innerHTML = "<b>Please enter Player ID and API Key.</b>";
-      overlay.style.display = '';
-      return;
-    }
-    try {
-      const response = await fetch(getApiUrl());
-      if (!response.ok) {
-        overlay.innerHTML = "<b>Error fetching data. Check your API URL and credentials.</b>";
-        overlay.style.display = '';
-        return;
-      }
-      const data = await response.json();
+  await fetchSOTD();
+  await fetchUserInfo(playerId);
+  await fetchSessionInfo('2epova'); // replace with your server name
+  await fetchPlayerAdvData(playerId);
+}
 
-      // Adjust based on your API's data structure
-      const wallet = data.wallet ?? 'N/A';
-      const xp = data.xp ?? 'N/A';
-      const bonusXP = data.bonusXP ?? 'N/A';
-      const job = data.job ?? 'N/A';
-      const level = data.level ?? 'N/A';
-
-      // Update overlay
-      overlay.innerHTML = `
-        <b>Job:</b> ${job}<br>
-        <b>Level:</b> ${level}<br>
-        <b>XP:</b> ${xp}<br>
-        <b>Bonus XP Left:</b> ${bonusXP}<br>
-        <b>Wallet:</b> ${Number(wallet).toLocaleString()}
+// Fetch SOTD
+async function fetchSOTD() {
+  try {
+    const res = await fetch('https://ttycoon.eu/api/v1/serverdata/sotd');
+    const data = await res.json();
+    if (res.ok && data.status === 200) {
+      const s = data.data;
+      document.getElementById('sotd-value').innerHTML = `
+        <b>${s.skill}</b> + <b>${s.bonus}%</b>
       `;
-      overlay.style.display = '';
-    } catch(e) {
-      overlay.innerHTML = "<b>Error fetching data.</b>";
-      overlay.style.display = '';
-      console.error(e);
+    } else {
+      document.getElementById('sotd-value').textContent = 'Error fetching SOTD';
     }
+  } catch (err) {
+    document.getElementById('sotd-value').textContent = 'Error fetching SOTD';
   }
+}
 
-  // Start periodic fetch
-  function startFetching() {
-    if (fetchInterval) clearInterval(fetchInterval);
-    fetchData();
-    fetchInterval = setInterval(fetchData, 30000);
-  }
+// Fetch User Info (job, level, XP)
+async function fetchUserInfo(playerId) {
+  try {
+    const res = await fetch(`https://ttycoon.eu/api/v1/user/status?playerId=${playerId}`);
+    const data = await res.json();
+    if (res.ok && data.status === 200) {
+      const user = data;
+      document.getElementById('job-value').textContent = user.job || 'Unknown';
 
-  // Load saved credentials on start
-  if (playerId && apiKey) {
-    startFetching();
-  }
+      const level = user.level || 0;
+      const currentXP = user.currentXP || 0;
+      const nextXP = user.nextLevelXP || 0;
+      document.getElementById('level-value').textContent = `${level} (${currentXP}/${nextXP}xp)`;
 
-  // Optional: trigger fetch on page load if credentials exist
-  if (playerId && apiKey) {
-    // overlay will be updated by fetchData
+      document.getElementById('totalxp-value').textContent = user.totalXP || 0;
+      document.getElementById('bonusxp-value').textContent = user.bonusXP || 0;
+    } else {
+      document.getElementById('job-value').textContent = 'Error';
+    }
+  } catch (err) {
+    document.getElementById('job-value').textContent = 'Error';
   }
-})();
+}
+
+// Fetch Session Duration
+async function fetchSessionInfo(serverName) {
+  try {
+    const res = await fetch('https://ttycoon.eu/api/v1/serverdata/sessions');
+    const sessions = await res.json();
+    const serverSessions = sessions.filter(s => s.server === serverName && s.active);
+    if (serverSessions.length > 0) {
+      const latest = serverSessions[serverSessions.length - 1];
+      document.getElementById('session-value').textContent = `${Math.floor(latest.sessionDuration / 60)} min`;
+    } else {
+      document.getElementById('session-value').textContent = 'No active session';
+    }
+  } catch (err) {
+    document.getElementById('session-value').textContent = 'Error';
+  }
+}
+
+// Fetch detailed player data (licenses, skills, streaks)
+async function fetchPlayerAdvData(playerId) {
+  try {
+    const res = await fetch(`https://ttycoon.eu/api/v1/playerdata/dataadv?id=${playerId}&ignoreCache=jJ6IrXz3CwEfFYi05kmMWG5tkT6rWWwhragfM`);
+    const data = await res.json();
+    if (res.ok && data.code === "200") {
+      const pdata = data.data;
+      
+      // Licenses
+      const licensesDiv = document.getElementById('licenses-list');
+      licensesDiv.innerHTML = '';
+      for (const [license, timestamp] of Object.entries(pdata.data.licenses)) {
+        const licName = license.replace(/_/g, ' ');
+        const hasLicense = timestamp > 0;
+        const span = document.createElement('div');
+        span.textContent = `${licName}: ${hasLicense ? 'Yes' : 'No'}`;
+        licensesDiv.appendChild(span);
+      }
+
+      // Skills
+      const skillsDiv = document.getElementById('skills-list');
+      skillsDiv.innerHTML = '';
+      pdata.parsedSkills.forEach(skill => {
+        const skillName = skill.name;
+        const currentLevel = skill.skills[0].currentLevel;
+        const percentage = skill.skills[0].percentage;
+        const div = document.createElement('div');
+        div.textContent = `${skillName}: Level ${currentLevel} (${percentage}%)`;
+        skillsDiv.appendChild(div);
+      });
+    } else {
+      document.getElementById('licenses-list').textContent = 'Error fetching data';
+      document.getElementById('skills-list').textContent = 'Error fetching data';
+    }
+  } catch (err) {
+    document.getElementById('licenses-list').textContent = 'Error fetching data';
+    document.getElementById('skills-list').textContent = 'Error fetching data';
+  }
+}
+
+// Initial fetch
+fetchAllData();
+
+// Refresh every 60 seconds
+setInterval(fetchAllData, 60000);
 </script>
+
 </body>
 </html>
